@@ -18,6 +18,13 @@ router.get('/', (req, res) => {
 })
 
 
+router.get('/:phone', (req, res) => {
+    var phone = req.params.phone;
+    var products = db.get('requests').find({phone: phone}).get('address');
+    res.json(products);
+})
+
+
 router.post('/', (req, res) => {
     var obj = {
         name: req.body.name,
