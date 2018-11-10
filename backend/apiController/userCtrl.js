@@ -9,11 +9,22 @@ router.get('/', (req, res) => {
         res.json(rows)
     })
     .catch(err => {
-        console.log(err);
         res.statusCode = 500;
         res.end('View error log on console');
     })
     
+})
+
+
+router.get('/address', (req, res)=> {
+    userRepo.getAddress()
+    .then(rows => {
+        res.json(rows)
+    })
+    .catch(err => {
+        res.statusCode = 500;
+        res.end('View error log on console');
+    })
 })
 
 
@@ -44,7 +55,6 @@ router.post('/', (req, res) => {
         })
     })
     .catch(err => {
-        console.log(err);
         res.statusCode = 500;
         res.end('View error log on console');
     })
