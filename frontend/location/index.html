@@ -1,121 +1,158 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <title>Geocoding Service</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <style>
-      /* Always set the map height explicitly to define the size of the div
+        /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
-      #map {
-        height: 100%;
-      }
-      /* Optional: Makes the sample page fill the window. */
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      #floating-panel {
-        position: absolute;
-        top: 10px;
-        left: 25%;
-        z-index: 5;
-        background-color: #fff;
-        padding: 5px;
-        border: 1px solid #999;
-        text-align: center;
-        font-family: 'Roboto','sans-serif';
-        line-height: 30px;
-        padding-left: 10px;
-      }
+        
+        #map {
+            height: 100%;
+        }
+        /* Optional: Makes the sample page fill the window. */
+        
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        #floating-panel {
+            position: absolute;
+            top: 10px;
+            left: 25%;
+            z-index: 5;
+            background-color: #fff;
+            padding: 5px;
+            border: 1px solid #999;
+            text-align: center;
+            font-family: 'Roboto', 'sans-serif';
+            line-height: 30px;
+            padding-left: 10px;
+        }
     </style>
-  </head>
-  <body>
+</head>
+
+<body>
     <div id="floating-panel">
-      <input id="address" type="textbox" value="Sydney, NSW">
-      <input id="submit" type="button" value="Geocode">
+        <input id="address" type="textbox" value="Sydney, NSW">
+        <input id="submit" type="button" value="Geocode">
+        <input id="update" type="button" value="Cập nhật tọa độ">
     </div>
     <div id="map" style="width: 400px;height: 400px;"></div>
 
 
-    <table id="list" style="border: 1px;"></table>
+    <table id="list" style="border: 5px;"></table>
     <script id="template" type="text/x-handlebars-template">
-      <tr>
-        <td>id</td>
-        <td>Họ tên</td>
-        <td>SĐT</td>
-        <td>Địa chỉ</td>
-        <td>Ghi chú</td>
-      </tr>
-      {{#each this}}
-      <tr>
-        <td>{{id}}</td>
-        <td>{{ho_ten}}</td>
-        <td>{{sdt}}</td>
-        <td>{{dia_chi}}</td>
-        <td>{{ghi_chu}}</td>
-      </tr>
-      {{/each}}
+        <tr>
+            <td>id</td>
+            <td>Họ tên</td>
+            <td>SĐT</td>
+            <td>Địa chỉ</td>
+            <td>Ghi chú</td>
+            <td>#</td>
+        </tr>
+        {{#each this}}
+        <tr>
+            <td>{{id}}</td>
+            <td>{{name}}</td>
+            <td>{{phone}}</td>
+            <td>{{address}}</td>
+            <td>{{note}}</td>
+            <td> <input id="submit" type="button" value="Định vị" onclick='alert(this->address);'></td>
+        </tr>
+        {{/each}}
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js"></script>
 
     <script>
+        function DinhVi(dc) {
+            alert(dc);
+        }
 
-       window.onload = function() {
-        loadUser();
-    }
+        var kinhdo = null;
+        var vido = null;
 
-    var loadUser = function() {
-        var url = 'http://localhost:3000/user';
-        axios.get(url)
-            .then(function(res) {
-              //console.log(res.data);
-              var source = document.getElementById('template').innerHTML;
-              var template = Handlebars.compile(source);
-              var html = template(res.data);
-              document.getElementById('list').innerHTML += html;
-            }).catch(function(err) {
-                console.log(err);
-            }).then(function() {
-              //setTimeout(loadUser, 3500);
-            })
-    }
+        window.onload = function() {
+            loadUser();
+        }
 
-    
+        var loadUser = function() {
+            var url = 'http://localhost:3000/request';
+            axios.get(url)
+                .then(function(res) {
+                    //console.log(res.data);
+                    var source = document.getElementById('template').innerHTML;
+                    var template = Handlebars.compile(source);
+                    var html = template(res.data);
+                    document.getElementById('list').innerHTML += html;
+                }).catch(function(err) {
+                    console.log(err);
+                }).then(function() {
+                    //setTimeout(loadUser, 3500);
+                })
+        }
 
-
-      function initMap() {
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 8,
-          center: {lat: -34.397, lng: 150.644}
-        });
-        var geocoder = new google.maps.Geocoder();
-
-        document.getElementById('submit').addEventListener('click', function() {
-          geocodeAddress(geocoder, map);
-        });
-      }
-
-      function geocodeAddress(geocoder, resultsMap) {
-        var address = document.getElementById('address').value;
-        geocoder.geocode({'address': address}, function(results, status) {
-          if (status === 'OK') {
-            console.log(results[0].geometry.location);
-            resultsMap.setCenter(results[0].geometry.location);
-            var marker = new google.maps.Marker({
-              map: resultsMap,
-              position: results[0].geometry.location
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 8,
+                center: {
+                    lat: -34.397,
+                    lng: 150.644
+                }
             });
-          } else {
-            alert('Geocode was not successful for the following reason: ' + status);
-          }
+            var geocoder = new google.maps.Geocoder();
+
+            document.getElementById('submit').addEventListener('click', function() {
+                geocodeAddress(geocoder, map);
+            });
+        }
+
+        function geocodeAddress(geocoder, resultsMap) {
+            var address = document.getElementById('address').value;
+            geocoder.geocode({
+                'address': address
+            }, function(results, status) {
+                if (status === 'OK') {
+                    //console.log(results[0].geometry.location.lat());
+                    kinhdo = results[0].geometry.location.lng();
+                    vido = results[0].geometry.location.lat();
+
+                    resultsMap.setCenter(results[0].geometry.location);
+                    var marker = new google.maps.Marker({
+                        map: resultsMap,
+                        position: results[0].geometry.location
+                    });
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+
+
+        document.getElementById("update").addEventListener("click", function() {
+            axios.post('http://localhost:3000/request', {
+                    user_id: 2,
+                    trang_thai: 'Đã định vị',
+                    kinh_do: parseFloat(kinhdo),
+                    vi_do: parseFloat(vido),
+                    dia_chi_don: 'Ban đầu'
+                })
+                .then(function(response) {
+                    console.log(response);
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
         });
-      }
     </script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBl4QyHMxlZar0aVUVaJmEbqYV8TioCQLM&callback=initMap">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBl4QyHMxlZar0aVUVaJmEbqYV8TioCQLM&callback=initMap">
     </script>
-  </body>
+</body>
+
 </html>

@@ -6,6 +6,7 @@ var express = require('express'),
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+var requestCtrl = require('./apiController/requestCtrl');
 var userCtrl = require('./apiController/userCtrl');
 var authRepo = require('./repo/authRepo');
 var verifyAccessToken = require('./repo/authRepo').verifyAccessToken;
@@ -18,11 +19,15 @@ app.use(cors());
 
 // app.use('/user', verifyAccessToken, userCtrl);
 app.use('/user', userCtrl);
+app.use('/request', requestCtrl);
 
 app.get('/login', (req, res) => {
     var userEntity = {
-        Username: 1,
-        Password: 'raw pwd'
+        username: 1,
+        password: 'raw pwd',
+        name: 'Tấn Phan',
+        accountType: 1,
+        status: 0
     }
     var acToken = authRepo.generateAccessToken(userEntity);
     res.json({
@@ -30,7 +35,7 @@ app.get('/login', (req, res) => {
     });
 })
 
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
     res.sendStatus(200);
 });
 

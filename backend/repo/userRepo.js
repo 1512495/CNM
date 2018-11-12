@@ -6,17 +6,13 @@ exports.loadAll = () => {
     return db.load(sql);
 }
 
-exports.getAddress = () => {
-    var sql = `select dia_chi from user`;
-    return db.load(sql);
-}
 
-exports.single = sdt => {
-    var sql = `select * from user where sdt = ${sdt}`;
+exports.single = id => {
+    var sql = `select * from user where id = ${id}`;
     return db.load(sql);
 }
 
 exports.add = (user) => {
-    var sql = `insert into user(ho_ten, sdt, dia_chi, ghi_chu) values('${user.ho_ten}','${user.sdt}', '${user.dia_chi}', '${user.ghi_chu}')`;
+    var sql = `insert into user(username, password, name, accountType_id, status) values('${user.username}','${user.password}', '${user.name}', '${user.accountType_id}', '${user.status}')`;
     return db.save(sql);
 }

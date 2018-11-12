@@ -4,66 +4,70 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        <title>User Info</title>
-body {font-family: Arial, Helvetica, sans-serif;}
-* {box-sizing: border-box;}
-
-input[type=text], select, textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    margin-top: 6px;
-    margin-bottom: 16px;
-    resize: vertical;
-}
-
-input[type=button] {
-    background-color: #4CAF50;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-input[type=button]:hover {
-    background-color: #45a049;
-}
-
-.container {
-    border-radius: 5px;
-    background-color: #f2f2f2;
-    padding: 20px;
-}
-</style>
-
+        <title>User Info</title>body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        input[type=text],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 6px;
+            margin-bottom: 16px;
+            resize: vertical;
+        }
+        
+        input[type=button] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        input[type=button]:hover {
+            background-color: #45a049;
+        }
+        
+        .container {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+    </style>
 
 
 
 </head>
 
 <body>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+
 
 
     <div class="container" style="width: 80%; margin: 50px 100px;">
         <h3>User Info</h3>
 
         <form action="">
-            <label for="ho_ten">Họ và tên</label>
-            <input type="text" id="ho_ten" name="ho_ten" placeholder="Nhập họ tên...">
+            <label for="name">Họ và tên</label>
+            <input type="text" id="name" name="name" placeholder="Nhập họ tên...">
 
-            <label for="sdt">Số điện thoại</label>
-            <input type="text" id="sdt" name="sdt" placeholder="Nhập SĐT..">
+            <label for="phone">Số điện thoại</label>
+            <input type="text" id="phone" name="phone" placeholder="Nhập SĐT..">
 
-            <label for="dia_chi">Địa chỉ</label>
-            <input type="text" id="dia_chi" name="dia_chi" placeholder="Nhập địa chỉ..">
+            <label for="address">Địa chỉ</label>
+            <input type="text" id="address" name="address" placeholder="Nhập địa chỉ..">
 
-            <label for="ghi_chu">Ghi chú</label>
-            <textarea id="ghi_chu" name="ghi_chu" placeholder="Note.." style="height:100px"></textarea>
+            <label for="note">Ghi chú</label>
+            <textarea id="note" name="note" placeholder="Note.." style="height:100px"></textarea>
 
             <input type="button" value="Submit" id="btnAdd">
         </form>
@@ -71,28 +75,21 @@ input[type=button]:hover {
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript">
-
-        document.getElementById("btnAdd").addEventListener("click", function () {
-            axios.post('http://localhost:3000/user', {
-                ho_ten: document.getElementById("ho_ten").value,
-                sdt: document.getElementById("sdt").value,
-                dia_chi: document.getElementById("dia_chi").value,
-                ghi_chu: document.getElementById("ghi_chu").value
-            })
-                .then(function (response) {
+        document.getElementById("btnAdd").addEventListener("click", function() {
+            axios.post('http://localhost:3000/request', {
+                    name: document.getElementById("name").value,
+                    phone: document.getElementById("phone").value,
+                    address: document.getElementById("address").value,
+                    note: document.getElementById("note").value
+                })
+                .then(function(response) {
+                    alert("added");
                     console.log(response);
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.log(error);
                 });
         });
-
-        var socket = io('http://localhost:3000');
-
-        socket.on('connection', function (msg) {
-            console.log("Connected");
-        });
-
     </script>
 
 </body>
