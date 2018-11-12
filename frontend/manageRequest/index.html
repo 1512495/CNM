@@ -1,56 +1,55 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>VueJS</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
+
 <body>
 	<div id="app">
-		<ul>
-			<li v-for="c in categories" :title="c.CatID">{{c.CatName}}</li>
+		<ul v-if="list">
+			<li v-for="request in list" :title="request.id">{{request.name}}</li>
 		</ul>
 		<button type="button" @click="addCategory">
 			add
 		</button>
 	</div>
 	<script>
-        
-        var socket = io('http://localhost:3000');
-        socket.on('new address added', function (msg) {
-            console.log("New address added, update");
-        });
+
 		var vm = new Vue({
-		
+
 			el: '#app',
 			data: {
-				categories: [
-					{CatID: 1, CatName: 'Phone'},
-					{CatID: 2, CatName: 'Laptop'},
-					{CatID: 3, CatName: 'Book'},
-					{CatID: 4, CatName: 'Watch'},
-				]
+				list: []
 			},
-
+			created: function () {
+				axios.get('http://localhost:3000/request').then((response) => {
+					this.list = response.data;
+					console.log(vm.list);
+				})
+			},
 			methods: {
-				addCategory: function() {
-					
-					// alert('msg');
-
+				addCategory: function () {
 					var self = this;
-
-					var c = {
-						CatID: 5,
-						CatName: 'Tablet'
-					}
-
-					self.categories.push(c);
+					self.list = this.list;
 				}
 			}
-		
-		})
+		});
+		let data;
+		var socket = io('http://localhost:3000');
+		socket.on('new address added', (msg) => {
+			axios.get('http://localhost:3000/request').then((response) => {
+				console.log(vm);
+				if (vm) {
+					vm.list = response.data;
+				}
+			})
+		});
 	</script>
 </body>
+
 </html>
