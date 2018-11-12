@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-<title>User Info</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        <title>User Info</title>
 body {font-family: Arial, Helvetica, sans-serif;}
 * {box-sizing: border-box;}
 
@@ -40,50 +41,60 @@ input[type=button]:hover {
 
 
 
+
 </head>
+
 <body>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 
 
+    <div class="container" style="width: 80%; margin: 50px 100px;">
+        <h3>User Info</h3>
 
-<div class="container" style="width: 80%; margin: 50px 100px;">
-    <h3>User Info</h3>
+        <form action="">
+            <label for="ho_ten">Họ và tên</label>
+            <input type="text" id="ho_ten" name="ho_ten" placeholder="Nhập họ tên...">
 
-  <form action="">
-    <label for="ho_ten">Họ và tên</label>
-    <input type="text" id="ho_ten" name="ho_ten" placeholder="Nhập họ tên...">
+            <label for="sdt">Số điện thoại</label>
+            <input type="text" id="sdt" name="sdt" placeholder="Nhập SĐT..">
 
-    <label for="sdt">Số điện thoại</label>
-    <input type="text" id="sdt" name="sdt"  placeholder="Nhập SĐT..">
+            <label for="dia_chi">Địa chỉ</label>
+            <input type="text" id="dia_chi" name="dia_chi" placeholder="Nhập địa chỉ..">
 
-    <label for="dia_chi">Địa chỉ</label>
-    <input type="text" id="dia_chi" name="dia_chi"  placeholder="Nhập địa chỉ..">
+            <label for="ghi_chu">Ghi chú</label>
+            <textarea id="ghi_chu" name="ghi_chu" placeholder="Note.." style="height:100px"></textarea>
 
-    <label for="ghi_chu">Ghi chú</label>
-    <textarea id="ghi_chu" name="ghi_chu"  placeholder="Note.." style="height:100px"></textarea>
+            <input type="button" value="Submit" id="btnAdd">
+        </form>
+    </div>
 
-    <input type="button" value="Submit" id="btnAdd">
-  </form>
-</div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="text/javascript">
 
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script type="text/javascript">
+        document.getElementById("btnAdd").addEventListener("click", function () {
+            axios.post('http://localhost:3000/user', {
+                ho_ten: document.getElementById("ho_ten").value,
+                sdt: document.getElementById("sdt").value,
+                dia_chi: document.getElementById("dia_chi").value,
+                ghi_chu: document.getElementById("ghi_chu").value
+            })
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        });
 
-    document.getElementById("btnAdd").addEventListener("click", function(){ 
-         axios.post('http://localhost:3000/user', {
-            ho_ten:  document.getElementById("ho_ten").value,
-            sdt: document.getElementById("sdt").value,
-            dia_chi: document.getElementById("dia_chi").value,
-            ghi_chu: document.getElementById("ghi_chu").value
-          })
-          .then(function (response) {
-            console.log(response);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-    });
-   
-</script>
+        var socket = io('http://localhost:3000');
+
+        socket.on('connection', function (msg) {
+            console.log("Connected");
+        });
+
+    </script>
 
 </body>
+
 </html>
