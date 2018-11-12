@@ -50,9 +50,8 @@
 </head>
 
 <body>
-
-
-
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <div class="container" style="width: 80%; margin: 50px 100px;">
         <h3>User Info</h3>
 
@@ -75,18 +74,23 @@
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript">
-        document.getElementById("btnAdd").addEventListener("click", function() {
+        var socket = io('http://localhost:3000');
+        socket.on('connection', function (msg) {
+            console.log("Connected");
+        });
+        document.getElementById("btnAdd").addEventListener("click", function () {
             axios.post('http://localhost:3000/request', {
-                    name: document.getElementById("name").value,
-                    phone: document.getElementById("phone").value,
-                    address: document.getElementById("address").value,
-                    note: document.getElementById("note").value
-                })
-                .then(function(response) {
+                name: document.getElementById("name").value,
+                phone: document.getElementById("phone").value,
+                address: document.getElementById("address").value,
+                note: document.getElementById("note").value
+            })
+                .then(function (response) {
                     alert("added");
                     console.log(response);
+                    socket.emit("submit");
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.log(error);
                 });
         });

@@ -2,7 +2,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     morgan = require('morgan'),
     cors = require('cors');
-
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
@@ -11,7 +11,7 @@ var userCtrl = require('./apiController/userCtrl');
 var authRepo = require('./repo/authRepo');
 var verifyAccessToken = require('./repo/authRepo').verifyAccessToken;
 
-var app = express();
+
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
@@ -35,7 +35,7 @@ app.get('/login', (req, res) => {
     });
 })
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     res.sendStatus(200);
 });
 
@@ -50,5 +50,9 @@ io.on('connection', (socket) => {
 
     socket.on("disconnect", () => {
         console.log("User disconnected");
+    });
+    socket.on("submit", () => {
+        console.log("Submitted an address");
+        socket.broadcast.emit('new address added');
     })
 })

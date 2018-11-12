@@ -46,6 +46,7 @@ router.post('/', (req, res) => {
         dia_chi: req.body.dia_chi,
         ghi_chu: req.body.ghi_chu
     }
+    console.log(user);
 
     userRepo.add(user)
     .then(value => {
