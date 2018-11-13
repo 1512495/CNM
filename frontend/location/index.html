@@ -42,8 +42,8 @@
 
 <body>
     <div id="floating-panel">
-        <input id="address" type="textbox" value="Hồ Chí Minh">
-        <input id="submit" type="button" value="Geocode">
+        <!-- <input id="address" type="textbox" value="Hồ Chí Minh">
+        <input id="submit" type="button" value="Geocode"> -->
         <input id="update" type="button" value="Cập nhật tọa độ">
     </div>
     <div id="map" style="width: 400px;height: 400px;"></div>
@@ -69,7 +69,7 @@
             <td>{{address}}</td>
             <td>{{note}}</td>
             <td>{{status}}</td>
-            <td> <input id="{{id}}" type="button" value="Định vị" onclick='DinhVi(id);'></td>
+            <td> <input id="{{id}}" type="button" value="Chọn để định vị" onclick='DinhVi(id);'></td>
         </tr>
         {{/each}}
     </script>
@@ -88,12 +88,13 @@
             console.log(current);
             if (current) {
                 $('#current').html("Đang định vị cho: " + current.name);
+                $('#current').val(current.id);
                 geocodeAddress(geocoder, map, current.address)
             }
         }
 
-        var kinhdo = null;
-        var vido = null;
+        var lat = null;
+        var long = null;
 
         window.onload = function () {
             loadUser();
@@ -149,8 +150,8 @@
             }, function (results, status) {
                 if (status === 'OK') {
                     //console.log(results[0].geometry.location.lat());
-                    kinhdo = results[0].geometry.location.lng();
-                    vido = results[0].geometry.location.lat();
+                    long = results[0].geometry.location.lng();
+                    lat = results[0].geometry.location.lat();
 
                     resultsMap.setCenter(results[0].geometry.location);
                     var marker = new google.maps.Marker({
@@ -162,6 +163,8 @@
 
                     google.maps.event.addListener(marker, 'dragend', function (event) {
                         console.log('final position is ' + event.latLng.lat() + ' / ' + event.latLng.lng());
+                        lat = event.latLng.lat();
+                        long = event.latLng.lng();
                     });
 
                 } else {
@@ -172,12 +175,12 @@
 
 
         document.getElementById("update").addEventListener("click", function () {
+            console.log("")
             axios.post('http://localhost:3000/request/update', {
-                user_id: 2,
-                trang_thai: 1,
-                kinh_do: parseFloat(kinhdo),
-                vi_do: parseFloat(vido),
-                dia_chi_don: 'Ban đầu'
+                user_id: current.id,
+                status: 1,
+                lat: lat,
+                long: long,
             })
                 .then(function (response) {
                     console.log(response);

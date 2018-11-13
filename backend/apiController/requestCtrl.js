@@ -15,14 +15,13 @@ router.get('/', (req, res) => {
 
 })
 
-updateCoordinate
 router.post('/update', (req, res) => {
 
     var request = {
         id: req.body.user_id,
-        phone: req.body.phone,
-        address: req.body.address,
-        note: req.body.note
+        status: 1,
+        latitude: req.body.lat,
+        longitude: req.body.long
     }
 
     requestRepo.updateCoordinate(request)

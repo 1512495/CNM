@@ -18,7 +18,7 @@ exports.add = (request) => {
 }
 
 
-exports.updateCoordinate = (id, status, latitude, longitude) => {
-    var sql = `update request set status = ${status}, latitude = ${latitude}, longitude = ${longitude} where id = ${id}`;
+exports.updateCoordinate = (request) => {
+    var sql = `update request set status = ${request.status}, latitude = ${request.latitude}, longitude = ${request.longitude} where id = ${request.id}`;
     return db.save(sql);
 }
