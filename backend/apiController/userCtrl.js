@@ -16,25 +16,16 @@ router.get('/', (req, res) => {
 })
 
 
-router.get('/address', (req, res)=> {
-    userRepo.getAddress()
-    .then(rows => {
-        res.json(rows)
+router.get('/:id', (req, res)=> {
+    var id = +req.params.id;
+    userRepo.single(id)
+    .then(row => {
+        res.json(row)
     })
     .catch(err => {
         res.statusCode = 500;
         res.end('View error log on console');
     })
-})
-
-
-router.get('/:sdt', (req, res) => {
-    var sdt = req.params.sdt;
-    userRepo.single(sdt).then(row => {
-        res.json({
-            row
-        });
-    });
 })
 
 
@@ -59,8 +50,6 @@ router.post('/', (req, res) => {
         res.statusCode = 500;
         res.end('View error log on console');
     })
-
-    
 })
 
 module.exports = router;
