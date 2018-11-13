@@ -6,6 +6,8 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <style>
         /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
@@ -40,12 +42,13 @@
 
 <body>
     <div id="floating-panel">
-        <input id="address" type="textbox" value="Sydney, NSW">
+        <input id="address" type="textbox" value="Hồ Chí Minh">
         <input id="submit" type="button" value="Geocode">
         <input id="update" type="button" value="Cập nhật tọa độ">
     </div>
     <div id="map" style="width: 400px;height: 400px;"></div>
 
+    <div id="current">Đang định vị cho: </div>
 
     <table id="list" style="border: 5px;"></table>
     <script id="template" type="text/x-handlebars-template">
@@ -55,6 +58,7 @@
             <td>SĐT</td>
             <td>Địa chỉ</td>
             <td>Ghi chú</td>
+            <td>Tình trạng</td>
             <td>#</td>
         </tr>
         {{#each this}}
@@ -64,60 +68,85 @@
             <td>{{phone}}</td>
             <td>{{address}}</td>
             <td>{{note}}</td>
-            <td> <input id="submit" type="button" value="Định vị" onclick='alert(this->address);'></td>
+            <td>{{status}}</td>
+            <td> <input id="{{id}}" type="button" value="Định vị" onclick='DinhVi(id);'></td>
         </tr>
         {{/each}}
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js"></script>
 
     <script>
-        function DinhVi(dc) {
-            alert(dc);
+        let list;
+        let current = null;
+        function DinhVi(id) {
+            for (let i = 0; i < list.length; i++) {
+                if (list[i].id == id) {
+                    current = list[i];
+                    break;
+                }
+            }
+            console.log(current);
+            if (current) {
+                $('#current').html("Đang định vị cho: " + current.name);
+                geocodeAddress(geocoder, map, current.address)
+            }
         }
 
         var kinhdo = null;
         var vido = null;
 
-        window.onload = function() {
+        window.onload = function () {
             loadUser();
         }
 
-        var loadUser = function() {
+        var socket = io('http://localhost:3000');
+        socket.on('connection', function (msg) {
+            console.log("Connected");
+        });
+        socket.on('new address added', (msg) => {
+            axios.get('http://localhost:3000/request').then((response) => {
+                loadUser();
+            })
+        });
+
+        var loadUser = function () {
+            document.getElementById('list').innerHTML = '';
             var url = 'http://localhost:3000/request';
             axios.get(url)
-                .then(function(res) {
+                .then(function (res) {
                     //console.log(res.data);
                     var source = document.getElementById('template').innerHTML;
                     var template = Handlebars.compile(source);
                     var html = template(res.data);
+                    list = res.data;
                     document.getElementById('list').innerHTML += html;
-                }).catch(function(err) {
+                }).catch(function (err) {
                     console.log(err);
-                }).then(function() {
+                }).then(function () {
                     //setTimeout(loadUser, 3500);
                 })
         }
-
+        var geocoder;
+        var map;
         function initMap() {
-            var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 8,
+            geocoder = new google.maps.Geocoder();
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
                 center: {
-                    lat: -34.397,
-                    lng: 150.644
+                    lat: 10.762622,
+                    lng: 106.660172
                 }
             });
-            var geocoder = new google.maps.Geocoder();
-
-            document.getElementById('submit').addEventListener('click', function() {
-                geocodeAddress(geocoder, map);
+            document.getElementById('submit').addEventListener('click', function () {
+                geocodeAddress(geocoder, map, "Hồ Chí Minh");
             });
+
         }
 
-        function geocodeAddress(geocoder, resultsMap) {
-            var address = document.getElementById('address').value;
+        function geocodeAddress(geocoder, resultsMap, address) {
             geocoder.geocode({
                 'address': address
-            }, function(results, status) {
+            }, function (results, status) {
                 if (status === 'OK') {
                     //console.log(results[0].geometry.location.lat());
                     kinhdo = results[0].geometry.location.lng();
@@ -126,8 +155,15 @@
                     resultsMap.setCenter(results[0].geometry.location);
                     var marker = new google.maps.Marker({
                         map: resultsMap,
+                        draggable: true,
+                        animation: google.maps.Animation.DROP,
                         position: results[0].geometry.location
                     });
+
+                    google.maps.event.addListener(marker, 'dragend', function (event) {
+                        console.log('final position is ' + event.latLng.lat() + ' / ' + event.latLng.lng());
+                    });
+
                 } else {
                     alert('Geocode was not successful for the following reason: ' + status);
                 }
@@ -135,18 +171,18 @@
         }
 
 
-        document.getElementById("update").addEventListener("click", function() {
-            axios.post('http://localhost:3000/request', {
-                    user_id: 2,
-                    trang_thai: 'Đã định vị',
-                    kinh_do: parseFloat(kinhdo),
-                    vi_do: parseFloat(vido),
-                    dia_chi_don: 'Ban đầu'
-                })
-                .then(function(response) {
+        document.getElementById("update").addEventListener("click", function () {
+            axios.post('http://localhost:3000/request/update', {
+                user_id: 2,
+                trang_thai: 1,
+                kinh_do: parseFloat(kinhdo),
+                vi_do: parseFloat(vido),
+                dia_chi_don: 'Ban đầu'
+            })
+                .then(function (response) {
                     console.log(response);
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.log(error);
                 });
         });

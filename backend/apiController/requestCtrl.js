@@ -5,16 +5,38 @@ var router = express.Router();
 
 router.get('/', (req, res) => {
     requestRepo.loadAll()
-    .then(rows => {
-        res.json(rows)
-    })
-    .catch(err => {
-        res.statusCode = 500;
-        res.end('View error log on console');
-    })
-    
+        .then(rows => {
+            res.json(rows)
+        })
+        .catch(err => {
+            res.statusCode = 500;
+            res.end('View error log on console');
+        })
+
 })
 
+updateCoordinate
+router.post('/update', (req, res) => {
+
+    var request = {
+        id: req.body.user_id,
+        phone: req.body.phone,
+        address: req.body.address,
+        note: req.body.note
+    }
+
+    requestRepo.updateCoordinate(request)
+        .then(value => {
+            res.statusCode = 201;
+            res.json({
+                msg: 'added'
+            })
+        })
+        .catch(err => {
+            res.statusCode = 500;
+            res.end('View error log on console');
+        })
+})
 
 router.post('/', (req, res) => {
 
@@ -26,16 +48,16 @@ router.post('/', (req, res) => {
     }
 
     requestRepo.add(request)
-    .then(value => {
-        res.statusCode = 201;
-        res.json({
-            msg: 'added'
+        .then(value => {
+            res.statusCode = 201;
+            res.json({
+                msg: 'added'
+            })
         })
-    })
-    .catch(err => {
-        res.statusCode = 500;
-        res.end('View error log on console');
-    })
+        .catch(err => {
+            res.statusCode = 500;
+            res.end('View error log on console');
+        })
 })
 
 
