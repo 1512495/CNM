@@ -89,7 +89,7 @@
             if (current) {
                 $('#current').html("Đang định vị cho: " + current.name);
                 $('#current').val(current.id);
-                geocodeAddress(geocoder, map, current.address)
+                geocodeAddress(geocoder, map, current.address, current);
             }
         }
 
@@ -138,13 +138,18 @@
                     lng: 106.660172
                 }
             });
-            document.getElementById('submit').addEventListener('click', function () {
-                geocodeAddress(geocoder, map, "Hồ Chí Minh");
-            });
+            // document.getElementById('submit').addEventListener('click', function () {
+            //     geocodeAddress(geocoder, map, "Hồ Chí Minh");
+            // });
 
         }
 
-        function geocodeAddress(geocoder, resultsMap, address) {
+        function geocodeAddress(geocoder, resultsMap, address, coor = null) {
+            var latlng = null;
+            if (coor) {
+                latlng = { lat: parseFloat(current.latitude), lng: parseFloat(current.longitude) };
+            }
+
             geocoder.geocode({
                 'address': address
             }, function (results, status) {
@@ -184,6 +189,7 @@
             })
                 .then(function (response) {
                     console.log(response);
+                    loadUser();
                 })
                 .catch(function (error) {
                     console.log(error);
