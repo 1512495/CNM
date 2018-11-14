@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `request` (
   `latitude` float DEFAULT NULL,
   `longitude` float DEFAULT NULL,
   `driver_id` int(11) DEFAULT NULL,
+  `reserve_geocode` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
