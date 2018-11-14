@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign Up</title>
+    <style>
+
+        body {font-family: Arial, Helvetica, sans-serif; margin: auto;}
+* {box-sizing: border-box;}
+
+input[type=text], input[type=password], input[type=email], select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-bottom: 16px;
+}
+
+input[type=button], [type=submit] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=button]:hover {
+    background-color: #45a049;
+}
+
+.container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+    text-align: center;
+    margin: auto; 
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%);
+}
+.form {
+text-align: left;
+}
+</style>
+
+
+
+
+</head>
+
+<body>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+
+
+    <div class="container" style="width: 40%;">
+        <h3>Sign Up</h3>
+
+        <form action="" class="form">
+            <label for="username">Username</label><br>
+            <input type="text" id="username" name="username" placeholder="NGUYEN_VAN_A" required>
+
+            <br>
+            <label for="email">Email</label><br>
+            <input type="email" id="email" name="email" placeholder="abc@gmail.com" required>
+
+            <br>
+            <label for="phone_number">Phone Number</label><br>
+            <input type="text" id="phone_number" name="phone_number" placeholder="0902123456">
+
+            <br>
+            <label for="sex">Sex</label><br>
+            <select name="sex" required>
+                <option value="Male" selected>Male</option>
+                <option value="Female">Female</option>
+                <option value="Other...">Other</option>
+            </select>
+
+            <br>
+            <label for="password">Password</label><br>
+            <input type="password" id="password" name="password" placeholder="Your password" required>
+
+            <br>
+            <label for="confirm">Confirm Password</label><br>
+            <input type="password" id="confirm" name="confirm" placeholder="Your password" required>
+            
+            <br>
+            <div style="text-align: center">
+                <input type="submit" value="Sign Up" id="btnSignUp">
+            </div>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+        $("#confirm").change(function () {
+            var p = $("#password").val();
+            if ($(this).val() != p) {
+                alert("Wrong confirm password!!!");
+                $("#confirm").val("").parent().addClass("has-error");
+            } else {
+                $("#confirm").parent().removeClass("has-error");
+            }
+        })
+    </script>
+</body>
+
+</html>
