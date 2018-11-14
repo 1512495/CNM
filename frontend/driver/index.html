@@ -6,7 +6,7 @@
     <title>Driver</title>
     <style>
 
-body {font-family: Arial, Helvetica, sans-serif; margin: auto;}
+        body {font-family: Arial, Helvetica, sans-serif; margin: auto;}
 * {box-sizing: border-box;}
 
 input[type=button], [type=submit] {
@@ -46,10 +46,80 @@ input[type=button]:hover {
     margin-right: 20px;
 }
 
+input[type=checkbox] {
+    visibility: hidden;
+}
+
+/**
+ * Checkbox
+ */
+ .checkbox {
+    width: 99px;
+    height: 30px;
+    background: #f2f2f2;
+    border: 1px solid #4CAF50;
+    margin: 20px 60px;
+ 
+    border-radius: 40px;
+    position: relative;
+}
+
+/**
+ * Create the text for the ready position
+ */
+ .checkbox:before {
+    content: 'ready';
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    height: 1.5px;
+    color: #4CAF50;
+    font-size: 11px;
+}
+
+/**
+ * Create the label for the standby position
+ */
+ .checkbox:after {
+    content: 'standby';
+    position: absolute;
+    top: 8px;
+    left: 49px;
+    height: 1.5px;
+    color: #888b91;
+    font-size: 11px;
+}
+
+/**
+ * Create the pill to click
+ */
+ .checkbox label {
+    display: block;
+    width: 39px;
+    height: 16px;
+    border-radius: 40px;
+ 
+    -webkit-transition: all .5s ease;
+    -moz-transition: all .5s ease;
+    -o-transition: all .5s ease;
+    -ms-transition: all .5s ease;
+    transition: all .5s ease;
+    cursor: pointer;
+    position: absolute;
+    top: 6px;
+    z-index: 1;
+    left: 9px;
+    background: #888b91;
+}
+ 
+/**
+ * Create the checkbox event for the label
+ */
+.checkbox input[type=checkbox]:checked + label {
+    left: 48px;
+    background: #4CAF50;
+}
 </style>
-
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBl4QyHMxlZar0aVUVaJmEbqYV8TioCQLM&callback=initMap" async defer></script>
-
 
 </head>
 
@@ -58,8 +128,14 @@ input[type=button]:hover {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 
 
-    <div class="container" style="width: 40%;">
+    <div class="container" style="width: 30%;">
         <h3>Driver</h3>
+        <span>
+            <div class="checkbox" style="float: right; margin-right: 0px; margin-top: 0px;">
+                <input type="checkbox" value="1" id="state" name="" />
+                <label for="state"></label>
+            </div>
+        </span>
         <div id="map">
 
         </div>
@@ -69,21 +145,26 @@ input[type=button]:hover {
         <form action="">
             <input type="button" class="margin" value="Start" id="btnStart">
             <input type="button" class="margin" value="End" id="btnEnd">
-            <div style="margin: 16px;"></div>
+            <!-- <div style="margin: 16px;"></div>
             <span class="margin"><input type="radio" name="state" value="ready" checked> READY</span>
-            <span class="margin"><input type="radio" name="state" value="standby"> STANDBY</span>
+            <span class="margin"><input type="radio" name="state" value="standby"> STANDBY</span> -->
         </form>
     </div>
-    
+
     <script>
-            function initMap() {
-              var mapDiv = document.getElementById('map');
-              var map = new google.maps.Map(mapDiv, {
-                center: {lat: 44.540, lng: -78.546},
+        function initMap() {
+            var mapDiv = document.getElementById('map');
+            var map = new google.maps.Map(mapDiv, {
+                center: {
+                    lat: 44.540,
+                    lng: -78.546
+                },
                 zoom: 8
-              });
-            }
+            });
+        }
     </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBl4QyHMxlZar0aVUVaJmEbqYV8TioCQLM&callback=initMap"
+        async defer></script>
 </body>
 
 </html>
