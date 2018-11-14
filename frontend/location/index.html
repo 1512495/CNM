@@ -37,38 +37,91 @@
             line-height: 30px;
             padding-left: 10px;
         }
+        .container {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px;
+            text-align: center;
+            margin: auto; 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%);
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: white;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th, .align {text-align: center}
+        tr:hover {background-color:#f5f5f5;}
+        input[type=button] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type=button]:hover {
+            background-color: #45a049;
+        }
+        .wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin: 16px;
+        }
+        #current {
+            margin-top: 5px;
+            position: relative;
+            font-size: 20px;
+        }
     </style>
 </head>
 
 <body>
-    <div id="floating-panel">
-        <!-- <input id="address" type="textbox" value="Hồ Chí Minh">
+    <div class="container" style="width: 60%;">
+        <h3>Geocoding Service</h3>
+        <div id="floating-panel">
+            <!-- <input id="address" type="textbox" value="Hồ Chí Minh">
         <input id="submit" type="button" value="Geocode"> -->
-        <input id="update" type="button" value="Cập nhật tọa độ">
+            <!-- <input id="update" type="button" value="Cập nhật tọa độ"> -->
+        </div>
+        <div id="map" style="width: 100%;height: 300px; border: 1px solid black"></div>
+
+        <div class="wrapper">
+            <div id="current">Đang định vị cho: </div>
+            <div style="float: right;"><input id="update" type="button" value="Cập nhật tọa độ" style="width: 40%;"></div>
+        </div>
+        
+
+        <table id="list" style="border: 5px;"></table>
     </div>
-    <div id="map" style="width: 400px;height: 400px;"></div>
-
-    <div id="current">Đang định vị cho: </div>
-
-    <table id="list" style="border: 5px;"></table>
     <script id="template" type="text/x-handlebars-template">
         <tr>
-            <td>id</td>
-            <td>Họ tên</td>
-            <td>SĐT</td>
-            <td>Địa chỉ</td>
-            <td>Ghi chú</td>
-            <td>Tình trạng</td>
-            <td>#</td>
+            <th>id</th>
+            <th>Họ tên</th>
+            <th>SĐT</th>
+            <th>Địa chỉ</th>
+            <th>Ghi chú</th>
+            <th>Tình trạng</th>
+            <th>#</th>
         </tr>
         {{#each this}}
         <tr>
-            <td>{{id}}</td>
+            <td class="align">{{id}}</td>
             <td>{{name}}</td>
             <td>{{phone}}</td>
             <td>{{address}}</td>
             <td>{{note}}</td>
-            <td>{{status}}</td>
+            <td class="align">{{status}}</td>
             <td> <input id="{{id}}" type="button" value="Chọn để định vị" onclick='DinhVi(id);'></td>
         </tr>
         {{/each}}
@@ -78,6 +131,7 @@
     <script>
         let list;
         let current = null;
+
         function DinhVi(id) {
             for (let i = 0; i < list.length; i++) {
                 if (list[i].id == id) {
@@ -128,6 +182,7 @@
         }
         var geocoder;
         var map;
+
         function initMap() {
             geocoder = new google.maps.Geocoder();
             map = new google.maps.Map(document.getElementById('map'), {
@@ -146,7 +201,10 @@
         function geocodeAddress(geocoder, resultsMap, address, coor = null) {
             var latlng = null;
             if (coor) {
-                latlng = { lat: parseFloat(current.latitude), lng: parseFloat(current.longitude) };
+                latlng = {
+                    lat: parseFloat(current.latitude),
+                    lng: parseFloat(current.longitude)
+                };
             }
 
             geocoder.geocode({
@@ -181,11 +239,11 @@
         document.getElementById("update").addEventListener("click", function () {
             console.log("")
             axios.post('http://localhost:3000/request/update', {
-                user_id: current.id,
-                status: 1,
-                lat: lat,
-                long: long,
-            })
+                    user_id: current.id,
+                    status: 1,
+                    lat: lat,
+                    long: long,
+                })
                 .then(function (response) {
                     console.log(response);
                     loadUser();
