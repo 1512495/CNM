@@ -80,7 +80,7 @@
             <div id="current">Đang định vị cho: </div>
             <div style="float: right;"><input id="update" type="button" value="Cập nhật tọa độ" style="width: 40%;"></div>
         </div>
-        
+
 
         <table id="list" style="border: 5px;"></table>
     </div>
@@ -217,15 +217,15 @@
 
 
         document.getElementById("update").addEventListener("click", function () {
-            console.log("")
             axios.post('http://localhost:3000/request/update', {
-                    user_id: current.id,
-                    status: 1,
-                    lat: lat,
-                    long: long,
-                })
+                user_id: current.id,
+                status: 1,
+                lat: lat,
+                long: long,
+            })
                 .then(function (response) {
                     console.log(response);
+                    socket.emit("submit");
                     loadUser();
                 })
                 .catch(function (error) {
