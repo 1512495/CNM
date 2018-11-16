@@ -126,13 +126,15 @@ input[type=checkbox] {
 <body>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://cdn.rawgit.com/hilios/jQuery.countdown/2.1.0/dist/jquery.countdown.min.js"></script>
 
     <div class="container" style="width: 30%;">
         <h3>Driver</h3>
         <span>
             <div class="checkbox" style="float: right; margin-right: 0px; margin-top: 0px;">
-                <input type="checkbox" value="1" id="state" name="" />
+                <input type="checkbox" value="0" id="state" name="" />
                 <label for="state"></label>
             </div>
         </span>
@@ -143,25 +145,105 @@ input[type=checkbox] {
 
         </div>
         <form action="">
-            <input type="button" class="margin" value="Start" id="btnStart">
-            <input type="button" class="margin" value="End" id="btnEnd">
+            <input type="button" class="margin" value="Bắt đầu" id="btnStart">
+            <input type="button" class="margin" value="Kết thúc" id="btnEnd">
             <!-- <div style="margin: 16px;"></div>
             <span class="margin"><input type="radio" name="state" value="ready" checked> READY</span>
             <span class="margin"><input type="radio" name="state" value="standby"> STANDBY</span> -->
         </form>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
 
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Thông tin tài xế</h4>
+                </div>
+                <div class="modal-body" v-if="user">
+                    Có một chuyến xe lmao
+                    <div id="clock"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="accept">Nhận</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="decline">Không nhận</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
     <script>
+        
         function initMap() {
             var mapDiv = document.getElementById('map');
             var map = new google.maps.Map(mapDiv, {
-                center: {
-                    lat: 44.540,
-                    lng: -78.546
-                },
-                zoom: 8
+                center: { lat: 10.762622, lng: 106.660172 },
+                zoom: 15
             });
+            var marker;
+            var currentLat, currentLng;
+            google.maps.event.addListener(map, 'click', function (event) {
+                if (marker) {
+                    marker.setMap(null);
+                }
+                placeMarker(event.latLng);
+                console.log(currentLat);
+                console.log(currentLng);
+            });
+            function placeMarker(location) {
+                currentLat = location.lat();
+                currentLng = location.lng();
+                marker = new google.maps.Marker({
+                    position: location,
+                    animation: google.maps.Animation.DROP,
+                    map: map
+                });
+            }
         }
+
+        var socket = io('http://localhost:3000');
+        socket.on('send to driver', function (msg) {
+            console.log(msg);
+        });
+        var seconds;
+        document.getElementById('btnStart').onclick = function () {
+            document.getElementById('state').value = 0;
+            document.getElementById('state').checked = 0;
+            socket.emit("driver status", { id: 0, status: 0 });
+
+        };
+        document.getElementById('btnEnd').onclick = function () {
+            document.getElementById('state').value = 1;
+            document.getElementById('state').checked = 1;
+            socket.emit("driver status", { id: 0, status: 1 });
+        };
+        document.getElementById('state').onclick = function () {
+            // Thông báo cho server là ready hoặc không ready
+            if (document.getElementById('state').value == 1) {
+                document.getElementById('state').value = 0;
+                socket.emit("driver status", { id: 0, status: 0 });
+                
+                $("#myModal").modal({ backdrop: 'static', keyboard: false });
+                seconds = new Date().getTime() + 10000;
+                $('#clock').countdown(seconds, { elapse: false })
+                    .on('update.countdown', function (event) {
+                        var $this = $(this);
+                        $this.html(event.strftime('Thời gian còn lại để nhận chuyến xe: <span>%H:%M:%S</span>'));
+                    })
+                    .on('finish.countdown', function () {
+                        $('#decline').click();
+                    });;
+            }
+            else {
+                document.getElementById('state').value = 1;
+                socket.emit("driver status", { id: 0, status: 1 });
+            }
+            console.log(document.getElementById('state').value);
+        };
+
+
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBl4QyHMxlZar0aVUVaJmEbqYV8TioCQLM&callback=initMap"
         async defer></script>

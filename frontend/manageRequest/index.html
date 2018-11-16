@@ -63,7 +63,8 @@
 					<td v-else-if="request.status === 2">Đã có xe nhận</td>
 					<td v-else-if="request.status === 3">Đang di chuyển</td>
 					<td v-else>Đã hoàn thành</td>
-					<td><button v-if="request.driver_id" data-toggle="modal" data-target="#myModal" @click="driverInfo(request.driver_id)">Xem thông tin</button></td>
+					<td><button v-if="request.driver_id" data-toggle="modal" data-target="#myModal" @click="driverInfo(request.driver_id)">Xem
+							thông tin</button></td>
 				</tr>
 
 			</tbody>
@@ -142,8 +143,8 @@
 		var map;
 		function initMap() {
 			map = new google.maps.Map(document.getElementById('map'), {
-				center: { lat: -34.397, lng: 150.644 },
-				zoom: 8
+				center: { lat: 10.762622, lng: 106.660172 },
+				zoom: 15
 			});
 		}
 	</script>

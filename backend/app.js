@@ -54,5 +54,8 @@ io.on('connection', (socket) => {
     socket.on("submit", () => {
         console.log("Submitted an address");
         socket.broadcast.emit('new address added');
+    });
+    socket.on("driver status", (data) => {
+        console.log(data);
     })
 })
