@@ -57,5 +57,5 @@ io.on('connection', (socket) => {
     });
     socket.on("driver status", (data) => {
         console.log(data);
-    })
+    });
 })

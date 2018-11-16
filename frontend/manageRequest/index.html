@@ -109,7 +109,6 @@
 			created: function () {
 				axios.get('http://localhost:3000/request').then((response) => {
 					this.list = response.data;
-					//console.log(vm.list);
 				})
 			},
 			methods: {

@@ -175,7 +175,10 @@ input[type=checkbox] {
         </div>
     </div>
     <script>
-        
+
+        const STATUS_READY = 1;
+        const STATUS_NOT_READY = 0;
+
         function initMap() {
             var mapDiv = document.getElementById('map');
             var map = new google.maps.Map(mapDiv, {
@@ -208,40 +211,54 @@ input[type=checkbox] {
             console.log(msg);
         });
         var seconds;
+        var driverID, status;
+
+
+
         document.getElementById('btnStart').onclick = function () {
             document.getElementById('state').value = 0;
             document.getElementById('state').checked = 0;
-            socket.emit("driver status", { id: 0, status: 0 });
+            socket.emit("driver status", { id: driverID, status: 0 });
 
         };
         document.getElementById('btnEnd').onclick = function () {
             document.getElementById('state').value = 1;
             document.getElementById('state').checked = 1;
-            socket.emit("driver status", { id: 0, status: 1 });
+            socket.emit("driver status", { id: driverID, status: 1 });
         };
         document.getElementById('state').onclick = function () {
             // Thông báo cho server là ready hoặc không ready
             if (document.getElementById('state').value == 1) {
                 document.getElementById('state').value = 0;
-                socket.emit("driver status", { id: 0, status: 0 });
-                
-                $("#myModal").modal({ backdrop: 'static', keyboard: false });
-                seconds = new Date().getTime() + 10000;
-                $('#clock').countdown(seconds, { elapse: false })
-                    .on('update.countdown', function (event) {
-                        var $this = $(this);
-                        $this.html(event.strftime('Thời gian còn lại để nhận chuyến xe: <span>%H:%M:%S</span>'));
-                    })
-                    .on('finish.countdown', function () {
-                        $('#decline').click();
-                    });;
+                socket.emit("driver status", { id: driverID, status: 0 });
             }
             else {
                 document.getElementById('state').value = 1;
-                socket.emit("driver status", { id: 0, status: 1 });
+                socket.emit("driver status", { id: driverID, status: 1 });
             }
             console.log(document.getElementById('state').value);
         };
+
+
+        function decline() {
+            $('#decline').click(function () {
+                socket.emit("driver declined", { id: driverID, status: 0 });
+            });
+        }
+
+
+        function showModal() {
+            $("#myModal").modal({ backdrop: 'static', keyboard: false });
+            seconds = new Date().getTime() + 10000;
+            $('#clock').countdown(seconds, { elapse: false })
+                .on('update.countdown', function (event) {
+                    var $this = $(this);
+                    $this.html(event.strftime('Thời gian còn lại để nhận chuyến xe: <span>%H:%M:%S</span>'));
+                })
+                .on('finish.countdown', function () {
+                    decline();
+                });;
+        }
 
 
     </script>
