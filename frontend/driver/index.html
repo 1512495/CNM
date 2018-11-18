@@ -32,6 +32,7 @@ input[type=button]:hover {
     top: 50%; 
     left: 50%; 
     transform: translate(-50%, -50%);
+    width: 100%;
 }
 #map {
     border: 1px solid black;
@@ -70,7 +71,7 @@ input[type=checkbox] {
  .checkbox:before {
     content: 'ready';
     position: absolute;
-    top: 8px;
+    top: 7px;
     left: 12px;
     height: 1.5px;
     color: #4CAF50;
@@ -83,7 +84,7 @@ input[type=checkbox] {
  .checkbox:after {
     content: 'standby';
     position: absolute;
-    top: 8px;
+    top: 7px;
     left: 49px;
     height: 1.5px;
     color: #888b91;
@@ -95,7 +96,7 @@ input[type=checkbox] {
  */
  .checkbox label {
     display: block;
-    width: 39px;
+    width: 41px;
     height: 16px;
     border-radius: 40px;
  
@@ -106,9 +107,9 @@ input[type=checkbox] {
     transition: all .5s ease;
     cursor: pointer;
     position: absolute;
-    top: 6px;
+    top: 4px;
     z-index: 1;
-    left: 9px;
+    left: 6px;
     background: #888b91;
 }
  
@@ -116,7 +117,7 @@ input[type=checkbox] {
  * Create the checkbox event for the label
  */
 .checkbox input[type=checkbox]:checked + label {
-    left: 48px;
+    left: 49px;
     background: #4CAF50;
 }
 </style>
@@ -130,7 +131,7 @@ input[type=checkbox] {
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="http://cdn.rawgit.com/hilios/jQuery.countdown/2.1.0/dist/jquery.countdown.min.js"></script>
 
-    <div class="container" style="width: 30%;">
+    <div class="container">
         <h3>Driver</h3>
         <span>
             <div class="checkbox" style="float: right; margin-right: 0px; margin-top: 0px;">
