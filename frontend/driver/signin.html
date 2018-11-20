@@ -51,7 +51,7 @@ input[type=button]:hover {
 </head>
 
 <body>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+   
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 
 
@@ -60,17 +60,38 @@ input[type=button]:hover {
 
         <form action="">
             <label for="username">Username</label><br>
-            <input type="text" id="username" name="username" placeholder=" Your email or username" required>
+            <input type="text" id="username" name="username" placeholder="Username" required>
 
             <br>
             <label for="password">Password</label><br>
-            <input type="password" id="password" name="password" placeholder="Your password" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
 
             <br>
             <input type="submit" value="Sign In" id="btnSignIn">
         </form>
     </div>
 
+
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script type="text/javascript">
+      
+       document.getElementById("btnSignIn").addEventListener("click", function () {
+            
+                axios.get('http://localhost:3000/user/login', {
+                    username: document.getElementById("username").value,
+                    password: document.getElementById("password").value
+                })
+                .then(function (response) {
+                    alert(response);
+                    console.log(response);
+                    window.location.href = "./index.html";
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+           
+        });
+  </script>
 </body>
 
 </html>

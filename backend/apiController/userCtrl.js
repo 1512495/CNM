@@ -32,10 +32,13 @@ router.get('/:id', (req, res)=> {
 router.post('/', (req, res) => {
 
     var user = {
-        ho_ten: req.body.ho_ten,
-        sdt: req.body.sdt,
-        dia_chi: req.body.dia_chi,
-        ghi_chu: req.body.ghi_chu
+        username: req.body.username,
+        password: req.body.password,
+        name: req.body.name,
+        phone: req.body.phone,
+        sex: req.body.sex,
+        accountType_id: 1,
+        status: 0
     }
     console.log(user);
 
@@ -43,8 +46,29 @@ router.post('/', (req, res) => {
     .then(value => {
         res.statusCode = 201;
         res.json({
-            msg: 'added'
+            msg: 'register success'
         })
+    })
+    .catch(err => {
+        res.statusCode = 500;
+        res.end('View error log on console');
+    })
+})
+
+
+router.get('/login', (req, res) => {
+
+    var user = {
+        username: req.body.username,
+        password: req.body.password
+    }
+    userRepo.login(user)
+    .then(row => {
+         if (row.length > 0) {
+            res.json({
+                msg: 'login success'
+            })
+        }
     })
     .catch(err => {
         res.statusCode = 500;

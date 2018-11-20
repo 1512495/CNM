@@ -3,16 +3,6 @@ $("#bookingBtn").click(function () {
 });
 
 
-function checkInput() {
-    var x = document.getElementById("phone").value
-    var regex = '[0-9]';
-    if (!x.match(regex))
-    {
-        alert("Must input numbers");
-        return false;
-    }
-}
-
 //Kiểm tra các input của form request (ngoại trừ input note)
 //Nếu có một input rỗng, disable button request
 //ngược lại enable

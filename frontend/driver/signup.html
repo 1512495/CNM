@@ -3,6 +3,9 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Sign Up</title>
     <style>
 
@@ -54,7 +57,6 @@ text-align: left;
 </head>
 
 <body>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 
 
@@ -62,32 +64,31 @@ text-align: left;
         <h3>Sign Up</h3>
 
         <form action="" class="form">
-            <label for="username">Username</label><br>
-            <input type="text" id="username" name="username" placeholder="NGUYEN_VAN_A" required>
+            <label for="username">Username (*)</label><br>
+            <input type="text" class="sign" id="username" name="username" placeholder="kuteo123">
 
             <br>
-            <label for="email">Email</label><br>
-            <input type="email" id="email" name="email" placeholder="abc@gmail.com" required>
+            <label for="email">FullName (*)</label><br>
+            <input type="text" class="sign" id="name" name="name" placeholder="NGUYEN_VAN_A">
 
             <br>
-            <label for="phone_number">Phone Number</label><br>
-            <input type="text" id="phone_number" name="phone_number" placeholder="0902123456">
+            <label for="phone_number">Phone Number (*)</label><br>
+            <input type="text" class="sign" id="phone" name="phone" placeholder="0123456789">
 
             <br>
-            <label for="sex">Sex</label><br>
-            <select name="sex" required>
+            <label for="sex">Sex (*)</label><br>
+            <select name="sex" class="sign" id="sex" >
                 <option value="Male" selected>Male</option>
                 <option value="Female">Female</option>
-                <option value="Other...">Other</option>
             </select>
 
             <br>
-            <label for="password">Password</label><br>
-            <input type="password" id="password" name="password" placeholder="Your password" required>
+            <label for="password">Password (*)</label><br>
+            <input type="password" class="sign" id="password" name="password" placeholder="Your password">
 
             <br>
-            <label for="confirm">Confirm Password</label><br>
-            <input type="password" id="confirm" name="confirm" placeholder="Your password" required>
+            <label for="confirm">Confirm Password (*)</label><br>
+            <input type="password" id="confirm" class="sign" name="confirm" placeholder="Your password">
             
             <br>
             <div style="text-align: center">
@@ -96,16 +97,40 @@ text-align: left;
         </form>
     </div>
 
-    <script type="text/javascript">
-        $("#confirm").change(function () {
-            var p = $("#password").val();
-            if ($(this).val() != p) {
-                alert("Wrong confirm password!!!");
-                $("#confirm").val("").parent().addClass("has-error");
+     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+     <script type="text/javascript">
+        //disabled button
+        // document.getElementById("btnSignUp").disabled = true;
+
+        // var username = document.getElementById("username").value;
+        // var name = document.getElementById("name").value;
+        // var phone = document.getElementById("phone").value;
+        // var sex = document.getElementById("sex").value;
+         var pass =  document.getElementById("password").value;
+         var confirm =  document.getElementById("confirm").value;
+
+        document.getElementById("btnSignUp").addEventListener("click", function () {
+            if(pass === confirm) {
+                axios.post('http://localhost:3000/user', {
+                    username: document.getElementById("username").value,
+                    password: document.getElementById("password").value,
+                    name: document.getElementById("name").value,
+                    phone: document.getElementById("phone").value,
+                    sex: document.getElementById("sex").value
+                })
+                .then(function (response) {
+                    alert(response);
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
             } else {
-                $("#confirm").parent().removeClass("has-error");
+                 alert("Wrong confirm password!!!");
             }
-        })
+           
+        });
     </script>
 </body>
 
