@@ -17,9 +17,9 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(cors());
 
-// app.use('/user', verifyAccessToken, userCtrl);
-app.use('/user', userCtrl);
-app.use('/request', requestCtrl);
+app.use('/user', verifyAccessToken, userCtrl);
+//app.use('/user', userCtrl);
+app.use('/request', verifyAccessToken, requestCtrl);
 
 app.get('/login', (req, res) => {
     var userEntity = {

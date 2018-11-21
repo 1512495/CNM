@@ -103,35 +103,62 @@
 
 			el: '#app',
 			data: {
+				token: "",
 				list: [],
 				user: {},
 			},
 			created: function () {
-				axios.get('http://localhost:3000/request').then((response) => {
-					this.list = response.data;
+				var self = this;
+				axios.get('http://localhost:3000/login').then((response) => {
+					var token = response.data.acToken;
+					console.log(token);
+					axios.get('http://localhost:3000/request',{
+						headers: {
+                        	'x-access-token': token
+                    	}
+					}).then((response1) => {
+						self.list = response1.data;
+					})
 				})
+				
 			},
 			methods: {
 				driverInfo: function (id) {
-					axios.get('http://localhost:3000/user/' + id).then((response) => {
-						this.user = response.data[0];
-						console.log(response.data);
+
+					var self = this;
+					axios.get('http://localhost:3000/login').then((response) => {
+						var token = response.data.acToken;
+						console.log(token);
+						axios.get('http://localhost:3000/user/' + id,{
+							headers: {
+	                        	'x-access-token': token
+	                    	}
+						}).then((response1) => {
+							self.user = response1.data[0];
+							console.log(response1.data);
+						})
 					})
 				}
 			}
 		});
 
 
-
-
 		let data;
 		var socket = io('http://localhost:3000');
 		socket.on('new address added', (msg) => {
-			axios.get('http://localhost:3000/request').then((response) => {
-				console.log(vm);
-				if (vm) {
-					vm.list = response.data;
-				}
+			axios.get('http://localhost:3000/login').then((res) => {
+				var token = res.data.acToken;
+				console.log(token);
+				axios.get('http://localhost:3000/request',{
+						headers: {
+                        	'x-access-token': token
+                    	}
+	            }).then((response) => {
+					console.log(vm);
+					if (vm) {
+						vm.list = response.data;
+					}
+				})
 			})
 		});
 	</script>

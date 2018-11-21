@@ -24,6 +24,10 @@ exports.verifyAccessToken = (req, res, next) => {
     var token = req.headers['x-access-token'];
     console.log(token);
 
+    if(!token){
+        var token = req.body.token;
+    }
+
     if (token) {
         jwt.verify(token, SECRET, (err, payload) => {
             if (err) {

@@ -26,17 +26,17 @@ $(document).ready(function () {
     //event key up request form
     $('.request').keyup(doCheck);
     //check login
-    if (Cookies.get('user_auth') == "true") {
-        //thêm tên user
-        $("#userDropdown").append(Cookies.get('user_name'));
-        //hidden login, signup dropdown item
-        //show logout
-        setDropDownItem(true);
-    } else {
-        //show login, signup dropdown item
-        //hidden logout
-        setDropDownItem(false);
-    }
+    // if (Cookies.get('user_auth') == "true") {
+    //     //thêm tên user
+    //     $("#userDropdown").append(Cookies.get('user_name'));
+    //     //hidden login, signup dropdown item
+    //     //show logout
+    //     setDropDownItem(true);
+    // } else {
+    //     //show login, signup dropdown item
+    //     //hidden logout
+    //     setDropDownItem(false);
+    // }
 });
 
 

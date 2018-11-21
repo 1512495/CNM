@@ -72,20 +72,26 @@
             console.log("Connected");
         });
         document.getElementById("btnDatxe").addEventListener("click", function () {
-            axios.post('http://localhost:3000/request', {
-                name: document.getElementById("name").value,
-                phone: document.getElementById("phone").value,
-                address: document.getElementById("address").value,
-                note: document.getElementById("note").value
-            })
-                .then(function (response) {
-                    alert("added");
-                    console.log(response);
-                    socket.emit("submit");
+           
+                axios.get('http://localhost:3000/login').then((res) => {
+                    var token = res.data.acToken;
+                    console.log(token);
+                    axios.post('http://localhost:3000/request', {
+                        token: token,
+                        name: document.getElementById("name").value,
+                        phone: document.getElementById("phone").value,
+                        address: document.getElementById("address").value,
+                        note: document.getElementById("note").value
+                    })
+                    .then(function (response) {
+                        alert("added");
+                        console.log(response);
+                        socket.emit("submit");
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
                 })
-                .catch(function (error) {
-                    console.log(error);
-                });
         });
     </script>
 

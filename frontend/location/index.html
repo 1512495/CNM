@@ -139,15 +139,30 @@
             console.log("Connected");
         });
         socket.on('new address added', (msg) => {
-            axios.get('http://localhost:3000/request').then((response) => {
-                loadUser();
+            axios.get('http://localhost:3000/login').then((res) => {
+                var token = res.data.acToken;
+                console.log(token);
+                axios.get('http://localhost:3000/request',{
+                    headers: {
+                        'x-access-token': token
+                    }
+                }).then((response) => {
+                    loadUser();
+                })
             })
         });
 
         var loadUser = function () {
             document.getElementById('list').innerHTML = '';
-            var url = 'http://localhost:3000/request';
-            axios.get(url)
+
+            axios.get('http://localhost:3000/login').then((response) => {
+                var token = response.data.acToken;
+                console.log(token);
+                 axios.get('http://localhost:3000/request', {
+                    headers: {
+                        'x-access-token': token
+                    }
+                 })
                 .then(function (res) {
                     var source = document.getElementById('template').innerHTML;
                     var template = Handlebars.compile(source);
@@ -159,6 +174,7 @@
                 }).then(function () {
                     //setTimeout(loadUser, 3500);
                 })
+            })
         }
         var geocoder;
         var map;
