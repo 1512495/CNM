@@ -106,6 +106,7 @@
         </tr>
         {{/each}}
     </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js"></script>
 
     <script>
@@ -151,6 +152,7 @@
                 })
             })
         });
+
 
         var loadUser = function () {
             document.getElementById('list').innerHTML = '';
@@ -233,12 +235,16 @@
 
 
         document.getElementById("update").addEventListener("click", function () {
-            axios.post('http://localhost:3000/request/update', {
-                user_id: current.id,
-                status: 1,
-                lat: lat,
-                long: long,
-            })
+             axios.get('http://localhost:3000/login').then((res) => {
+                var token = res.data.acToken;
+                console.log(token);
+                axios.post('http://localhost:3000/request/update', {
+                   token: token,
+                    user_id: current.id,
+                    status: 1,
+                    lat: lat,
+                    long: long,
+                })
                 .then(function (response) {
                     console.log(response);
                     socket.emit("submit");
@@ -247,6 +253,7 @@
                 .catch(function (error) {
                     console.log(error);
                 });
+            });
         });
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBl4QyHMxlZar0aVUVaJmEbqYV8TioCQLM&callback=initMap">
