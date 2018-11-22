@@ -126,6 +126,7 @@ input[type=checkbox] {
 
 <body>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -207,6 +208,7 @@ input[type=checkbox] {
 
         const STATUS_READY = 1;
         const STATUS_NOT_READY = 0;
+        var lat, long;
 
         function initMap() {
             var mapDiv = document.getElementById('map');
@@ -232,6 +234,10 @@ input[type=checkbox] {
                         marker.setMap(null);
                     }
                     placeMarker(event.latLng);
+                    lat = newPos.lat;
+                    long = newPos.lng;
+                    console.log(lat + long);
+                    updateLocation();
                 }
                 else {
                     alert("Địa điểm được chọn phải trong 100m");
@@ -256,6 +262,9 @@ input[type=checkbox] {
                     };
                     currentLat = pos.lat;
                     currentLng = pos.lng;
+                    lat = pos.lat;
+                    long = pos.lng;
+                    updateLocation();
 
                     infoWindow.setPosition(pos);
                     marker = new google.maps.Marker({
@@ -337,6 +346,26 @@ input[type=checkbox] {
                 .on('finish.countdown', function () {
                     decline();
                 });;
+        }
+
+        function updateLocation() {
+            axios.get('http://localhost:3000/login').then((response) => {
+                var token = response.data.acToken;
+                axios.post('http://localhost:3000/user/updateLocation', {
+                    token: token,
+                    id: 2,
+                    lat: lat,
+                    long: long,
+                })
+                    .then(function (res) {
+                        console.log(res);
+
+                    }).catch(function (err) {
+                        console.log(err);
+                    }).then(function () {
+                        //setTimeout(loadUser, 3500);
+                    })
+            })
         }
 
 

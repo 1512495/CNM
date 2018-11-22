@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `request` (
   `latitude` float DEFAULT NULL,
   `longitude` float DEFAULT NULL,
   `driver_id` int(11) DEFAULT NULL,
-  `reserve_geocode` varchar(200) DEFAULT NULL,
+  `reserve_geocode_address` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `request` (
 -- Dumping data for table `request`
 --
 
-INSERT INTO `request` (`id`, `name`, `phone`, `address`, `note`, `status`, `latitude`, `longitude`, `driver_id`, `reserve_geocode`) VALUES
+INSERT INTO `request` (`id`, `name`, `phone`, `address`, `note`, `status`, `latitude`, `longitude`, `driver_id`, `reserve_geocode_address`) VALUES
 (1, 'Phan Văn Tấn', '0338082216', '457 CMT8', 'ghi chú', 1, NULL, NULL, NULL, NULL),
 (2, 'Phan Văn Tấn', '0338082216', 'Tòa nhà Waseco, số 10 Phổ Quang', 'Gần ngã 5 chuồng chó', 1, NULL, NULL, NULL, NULL),
 (3, 'Nguyễn Thành Tâm', '023478243', '34 Dương Bá Trạc', 'Beat vk', 1, NULL, NULL, NULL, NULL),
@@ -87,6 +87,8 @@ CREATE TABLE IF NOT EXISTS `user` (
   `name` varchar(100) NOT NULL,
   `phone` varchar(100) DEFAULT NULL,
   `sex` varchar(7) DEFAULT NULL,
+  `latitude` float DEFAULT NULL,
+  `longitude` float DEFAULT NULL,
   `accountType_id` int(11) NOT NULL,
   `status` int(11) NOT NULL,
   PRIMARY KEY (`id`),

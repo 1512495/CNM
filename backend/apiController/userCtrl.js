@@ -55,6 +55,27 @@ router.post('/', (req, res) => {
     })
 })
 
+router.post('/updateLocation', (req, res) =>{
+var user = {
+        id: req.body.id,
+        lat: req.body.lat,
+        long: req.body.long,
+    }
+    console.log(user);
+
+    userRepo.updateLocation(user)
+    .then(value => {
+        res.statusCode = 201;
+        res.json({
+            msg: 'updated driver location'
+        })
+    })
+    .catch(err => {
+        res.statusCode = 500;
+        res.end('View error log on console');
+    })
+})
+
 
 router.get('/login', (req, res) => {
 

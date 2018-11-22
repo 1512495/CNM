@@ -101,7 +101,24 @@
             <td>{{phone}}</td>
             <td>{{address}}</td>
             <td>{{note}}</td>
-            <td class="align">{{status}}</td>
+            {{#switch status}}
+            {{#case 0}}
+            <td class="align">Chưa định vị</td>
+            {{/case}}
+            {{#case 1}}
+            <td class="align">Đã định vị</td>
+            {{/case}}
+            {{#case 2}}
+            <td class="align">Đã có xe nhận</td>
+            {{/case}}
+            {{#case 3}}
+            <td class="align">Đang di chuyển</td>
+            {{/case}}
+            {{#case 4}}
+            <td class="align">Đã hoàn thành</td>
+            {{/case}}
+            
+            {{/switch}}
             <td> <input id="{{id}}" type="button" value="Chọn để định vị" onclick='DinhVi(id);'></td>
         </tr>
         {{/each}}
@@ -110,6 +127,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js"></script>
 
     <script>
+
+
+
         let list;
         let current = null;
 
@@ -124,6 +144,9 @@
             if (current) {
                 $('#current').html("Đang định vị cho: " + current.name);
                 $('#current').val(current.id);
+                if (marker) {
+                    marker.setMap(null);
+                }
                 geocodeAddress(geocoder, map, current.address, current);
             }
         }
@@ -143,7 +166,7 @@
             axios.get('http://localhost:3000/login').then((res) => {
                 var token = res.data.acToken;
                 console.log(token);
-                axios.get('http://localhost:3000/request',{
+                axios.get('http://localhost:3000/request', {
                     headers: {
                         'x-access-token': token
                     }
@@ -160,22 +183,22 @@
             axios.get('http://localhost:3000/login').then((response) => {
                 var token = response.data.acToken;
                 console.log(token);
-                 axios.get('http://localhost:3000/request', {
+                axios.get('http://localhost:3000/request', {
                     headers: {
                         'x-access-token': token
                     }
-                 })
-                .then(function (res) {
-                    var source = document.getElementById('template').innerHTML;
-                    var template = Handlebars.compile(source);
-                    var html = template(res.data);
-                    list = res.data;
-                    document.getElementById('list').innerHTML += html;
-                }).catch(function (err) {
-                    console.log(err);
-                }).then(function () {
-                    //setTimeout(loadUser, 3500);
                 })
+                    .then(function (res) {
+                        var source = document.getElementById('template').innerHTML;
+                        var template = Handlebars.compile(source);
+                        var html = template(res.data);
+                        list = res.data;
+                        document.getElementById('list').innerHTML += html;
+                    }).catch(function (err) {
+                        console.log(err);
+                    }).then(function () {
+                        //setTimeout(loadUser, 3500);
+                    })
             })
         }
         var geocoder;
@@ -196,7 +219,37 @@
 
         }
 
+        Handlebars.registerHelper("switch", function (value, options) {
+            this._switch_value_ = value;
+            var html = options.fn(this);
+            delete this._switch_value_;
+            return html;
+        });
+
+        Handlebars.registerHelper("case", function (value, options) {
+            if (value == this._switch_value_) {
+                return options.fn(this);
+            }
+        });
+        var reserve_geocode_address;
+        function reserveGeocode() {
+            reserve_geocode_address = '';
+            var latlng = { lat: parseFloat(lat), lng: parseFloat(long) };
+            geocoder.geocode({ 'location': latlng }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+                        console.log(results[0].formatted_address);
+                        reserve_geocode_address = results[0].formatted_address;
+                    }
+                } else {
+                    window.alert('Geocoder failed due to: ' + status);
+                }
+            });
+        };
+
+        var marker;
         function geocodeAddress(geocoder, resultsMap, address, coor = null) {
+
             var latlng = null;
             if (coor) {
                 latlng = {
@@ -214,7 +267,7 @@
                     lat = results[0].geometry.location.lat();
 
                     resultsMap.setCenter(results[0].geometry.location);
-                    var marker = new google.maps.Marker({
+                    marker = new google.maps.Marker({
                         map: resultsMap,
                         draggable: true,
                         animation: google.maps.Animation.DROP,
@@ -225,6 +278,7 @@
                         console.log('final position is ' + event.latLng.lat() + ' / ' + event.latLng.lng());
                         lat = event.latLng.lat();
                         long = event.latLng.lng();
+                        reserveGeocode();
                     });
 
                 } else {
@@ -235,24 +289,28 @@
 
 
         document.getElementById("update").addEventListener("click", function () {
-             axios.get('http://localhost:3000/login').then((res) => {
+
+            axios.get('http://localhost:3000/login').then((res) => {
                 var token = res.data.acToken;
-                console.log(token);
+                if (!reserve_geocode_address) {
+                    reserve_geocode_address = '';
+                }
                 axios.post('http://localhost:3000/request/update', {
-                   token: token,
+                    token: token,
                     user_id: current.id,
                     status: 1,
                     lat: lat,
                     long: long,
+                    reserve_geocode_address: reserve_geocode_address,
                 })
-                .then(function (response) {
-                    console.log(response);
-                    socket.emit("submit");
-                    loadUser();
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+                    .then(function (response) {
+                        console.log(response);
+                        socket.emit("submit");
+                        loadUser();
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
             });
         });
     </script>
