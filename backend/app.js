@@ -12,10 +12,10 @@ var authRepo = require('./repo/authRepo');
 var verifyAccessToken = require('./repo/authRepo').verifyAccessToken;
 
 
-
+app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-app.use(cors());
+
 
 app.use('/user', verifyAccessToken, userCtrl);
 //app.use('/user', userCtrl);
