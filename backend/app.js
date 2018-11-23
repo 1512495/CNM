@@ -62,8 +62,10 @@ function getPendingRequest() {
 }
 
 setInterval(function () {
-    for (let i = 0; i < listRequest.length; i++) {
-        
+    getPendingRequest();
+    if (listRequest) {
+        currentRequest = listRequest[0];
+        sendRequestToDriver(listRequest[0]);
     }
 }, 15000);
 
@@ -134,5 +136,19 @@ io.on('connection', (socket) => {
         if (listRequest) {
             console.log(listRequest[1]);
         }
+    });
+
+    socket.on("driver accept request", (data) => {
+        console.log("Tài xế đã nhận");
+        console.log(data);
+        for (let i = 0; i < driverList.length; i++) {
+            if (data.id == driverList[i].id) {
+                driverList.pop(i);
+            }
+        }
+    });
+    socket.on("driver decline request", (data) => {
+        console.log("Tài xế đã từ chối");
+        console.log(data);
     });
 })

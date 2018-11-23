@@ -295,7 +295,7 @@ input[type=checkbox] {
 
 
         var socket = io('http://localhost:3000');
-        socket.on('send to driver', function (msg) {
+        socket.on('request for driver', function (msg) {
             console.log(msg);
         });
         var seconds;
