@@ -2,7 +2,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     morgan = require('morgan'),
     cors = require('cors');
-userRepo = require('./repo/userRepo');
+requestRepo = require('./repo/requestRepo');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -44,16 +44,45 @@ app.get('/', function (req, res) {
 var PORT = process.env.PORT || 3000;
 http.listen(PORT, () => {
     console.log(`API running on PORT ${PORT}`);
+    getPendingRequest();
 });
 
 
-var listRequest;
+var listRequest = [];
 var currentRequest;
 
 function getPendingRequest() {
-    userRepo.loadAll().then((res) => {
-        listRequest = res;
+    requestRepo.loadAll().then((res) => {
+        for (let i = 0; i < res.length; i++) {
+            if (res[i].status == 1) {
+                listRequest.push(res[i]);
+            }
+        }
     });
+}
+
+setInterval(function () {
+    for (let i = 0; i < listRequest.length; i++) {
+        
+    }
+}, 15000);
+
+async function sendRequestToDriver(request) {
+    currentDriver = await getClosestDriver(request);
+    await socket.broadcast.emit("request for driver", { driverId: 2, request: request });
+}
+
+function getClosestDriver(request) {
+    if (driverList.length > 0) {
+        let min = getDistance(driverList[0].lat, driverList[0].lng, request.latitude, request.longitude);
+        currentDriver = driverList[0];
+        for (let i = 0; i < driverList.length; i++) {
+            if (min < getDistance(driverList[i].lat, driverList[i].lng, request.latitude, request.longitude)) {
+                currentDriver = driverList[i];
+            }
+        }
+    }
+    return currentDriver;
 }
 
 
@@ -61,34 +90,23 @@ var rad = function (x) {
     return x * Math.PI / 180;
 };
 
-var getDistance = function (p1, p2) {
-    if (p1.lat && p2.lat) {
-        var R = 6378137; // Earth’s mean radius in meter
-        var dLat = rad(p2.lat - p1.lat);
-        var dLong = rad(p2.lng - p1.lng);
-        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(rad(p1.lat)) * Math.cos(rad(p2.lat)) *
-            Math.sin(dLong / 2) * Math.sin(dLong / 2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        var d = R * c;
-        return d; // returns the distance in meter
-    }
-    else {
-        var R = 6378137; // Earth’s mean radius in meter
-        var dLat = rad(p2.lat() - p1.lat());
-        var dLong = rad(p2.lng() - p1.lng());
-        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(rad(p1.lat())) * Math.cos(rad(p2.lat())) *
-            Math.sin(dLong / 2) * Math.sin(dLong / 2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        var d = R * c;
-        return d; // returns the distance in meter
-    }
+var getDistance = function (p1lat, p1lng, p2lat, p2lng) {
+    var R = 6378137; // Earth’s mean radius in meter
+    var dLat = rad(p2lat - p1lat);
+    var dLong = rad(p2lng - p1lng);
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(rad(p1lat)) * Math.cos(rad(p2lat)) *
+        Math.sin(dLong / 2) * Math.sin(dLong / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c;
+    return d; // returns the distance in meter
 };
 
 
 var driverList = [];
 var currentDriver;
+const STATUS_READY = 1;
+const STATUS_NOT_READY = 0;
 
 io.on('connection', (socket) => {
 
@@ -98,14 +116,21 @@ io.on('connection', (socket) => {
         console.log("User disconnected");
     });
     socket.on("submit", () => {
+        getPendingRequest();
         console.log("Submitted an address");
         socket.broadcast.emit('new address added');
     });
     socket.on("driver status", (data) => {
-        if (data.status == 1) {
+        if (data.status == STATUS_READY) {
             driverList.push(data);
         }
-        getPendingRequest();
+        if (data.status == STATUS_NOT_READY) {
+            for (let i = 0; i < driverList.length; i++) {
+                if (data.id == driverList[i].id) {
+                    driverList.pop(i);
+                }
+            }
+        }
         if (listRequest) {
             console.log(listRequest[1]);
         }

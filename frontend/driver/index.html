@@ -306,23 +306,23 @@ input[type=checkbox] {
         document.getElementById('btnStart').onclick = function () {
             document.getElementById('state').value = 0;
             document.getElementById('state').checked = 0;
-            socket.emit("driver status", { id: driverID, status: 0 });
+            socket.emit("driver status", { id: 2, status: STATUS_NOT_READY });
 
         };
         document.getElementById('btnEnd').onclick = function () {
             document.getElementById('state').value = 1;
             document.getElementById('state').checked = 1;
-            socket.emit("driver status", { id: driverID, status: 1 });
+            socket.emit("driver status", { id: 2, status: STATUS_READY, lat: lat, lng: long });
         };
         document.getElementById('state').onclick = function () {
             // Thông báo cho server là ready hoặc không ready
             if (document.getElementById('state').value == 1) {
                 document.getElementById('state').value = 0;
-                socket.emit("driver status", { id: driverID, status: 0 });
+                socket.emit("driver status", { id: 2, status: STATUS_NOT_READY });
             }
             else {
                 document.getElementById('state').value = 1;
-                socket.emit("driver status", { id: driverID, status: 1 });
+                socket.emit("driver status", { id: 2, status: STATUS_READY });
             }
             console.log(document.getElementById('state').value);
         };
