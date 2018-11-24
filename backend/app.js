@@ -2,7 +2,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     morgan = require('morgan'),
     cors = require('cors');
-requestRepo = require('./repo/requestRepo');
+var requestRepo = require('./repo/requestRepo');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -19,7 +19,6 @@ app.use(bodyParser.json());
 
 
 app.use('/user', verifyAccessToken, userCtrl);
-//app.use('/user', userCtrl);
 app.use('/request', verifyAccessToken, requestCtrl);
 
 app.get('/login', (req, res) => {
@@ -71,7 +70,7 @@ setInterval(function () {
 
 async function sendRequestToDriver(request) {
     currentDriver = await getClosestDriver(request);
-    await socket.broadcast.emit("request for driver", { driverId: 2, request: request });
+    await io.emit("request for driver", { driverId: 2, request: request });
 }
 
 function getClosestDriver(request) {

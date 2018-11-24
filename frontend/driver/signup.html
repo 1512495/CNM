@@ -73,7 +73,7 @@ text-align: left;
 
             <br>
             <label for="phone_number">Phone Number (*)</label><br>
-            <input type="text" class="sign" id="phone" name="phone" placeholder="0123456789">
+            <input type="text" class="sign" id="phone" name="phone" placeholder="0123456789" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
 
             <br>
             <label for="sex">Sex (*)</label><br>
@@ -84,52 +84,64 @@ text-align: left;
 
             <br>
             <label for="password">Password (*)</label><br>
-            <input type="password" class="sign" id="password" name="password" placeholder="Your password">
+            <input type="password" class="sign" id="password" name="password">
 
             <br>
             <label for="confirm">Confirm Password (*)</label><br>
-            <input type="password" id="confirm" class="sign" name="confirm" placeholder="Your password">
+            <input type="password" id="confirm" class="sign" name="confirm">
             
             <br>
             <div style="text-align: center">
-                <input type="submit" value="Sign Up" id="btnSignUp">
+                <input type="button" value="Sign Up" id="btnSignUp">
             </div>
         </form>
     </div>
 
      <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
      <script type="text/javascript">
-        //disabled button
-        // document.getElementById("btnSignUp").disabled = true;
-
-        // var username = document.getElementById("username").value;
-        // var name = document.getElementById("name").value;
-        // var phone = document.getElementById("phone").value;
-        // var sex = document.getElementById("sex").value;
-         var pass =  document.getElementById("password").value;
-         var confirm =  document.getElementById("confirm").value;
+        function clearInput() {
+            document.getElementById("username").value = "";
+            document.getElementById("password").value = "";
+            document.getElementById("name").value = "";
+            document.getElementById("phone").value = "";
+            document.getElementById("confirm").value = "";
+        }
 
         document.getElementById("btnSignUp").addEventListener("click", function () {
-            if(pass === confirm) {
-                axios.post('http://localhost:3000/user', {
-                    username: document.getElementById("username").value,
-                    password: document.getElementById("password").value,
-                    name: document.getElementById("name").value,
-                    phone: document.getElementById("phone").value,
-                    sex: document.getElementById("sex").value
-                })
-                .then(function (response) {
-                    alert(response);
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+            var username =  document.getElementById("username").value;
+            var password =  document.getElementById("password").value;
+            var name =  document.getElementById("name").value;
+            var phone =  document.getElementById("phone").value;
+            var confirm =  document.getElementById("confirm").value;
+            var sex =  document.getElementById("sex").value;
 
+            if(username === "" || phone === "" || password === "" || name === "") {
+                alert("Input is required");
             } else {
-                 alert("Wrong confirm password!!!");
+                if(password === confirm) {
+                    axios.get('http://localhost:3000/login').then((res) => {
+                        var token = res.data.acToken;
+
+                        axios.post('http://localhost:3000/user', {
+                            token: token,
+                            username: username,
+                            password: password,
+                            name: name,
+                            phone: phone,
+                            sex: sex
+                        })
+                        .then(function (response) {
+                            alert(response.data.msg);
+                             clearInput()
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                    });
+                } else {
+                     alert("Wrong confirm password!!!");
+                }
             }
-           
         });
     </script>
 </body>
