@@ -188,17 +188,17 @@
                         'x-access-token': token
                     }
                 })
-                    .then(function (res) {
-                        var source = document.getElementById('template').innerHTML;
-                        var template = Handlebars.compile(source);
-                        var html = template(res.data);
-                        list = res.data;
-                        document.getElementById('list').innerHTML += html;
-                    }).catch(function (err) {
-                        console.log(err);
-                    }).then(function () {
-                        //setTimeout(loadUser, 3500);
-                    })
+                .then(function (res) {
+                    var source = document.getElementById('template').innerHTML;
+                    var template = Handlebars.compile(source);
+                    var html = template(res.data);
+                    list = res.data;
+                    document.getElementById('list').innerHTML += html;
+                }).catch(function (err) {
+                    console.log(err);
+                }).then(function () {
+                    //setTimeout(loadUser, 3500);
+                })
             })
         }
         var geocoder;

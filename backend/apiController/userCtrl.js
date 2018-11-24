@@ -56,12 +56,11 @@ router.post('/', (req, res) => {
 })
 
 router.post('/updateLocation', (req, res) =>{
-var user = {
+    var user = {
         id: req.body.id,
         lat: req.body.lat,
         long: req.body.long,
     }
-    console.log(user);
 
     userRepo.updateLocation(user)
     .then(value => {
@@ -77,17 +76,21 @@ var user = {
 })
 
 
-router.get('/login', (req, res) => {
+router.post('/login', (req, res) => {
 
     var user = {
         username: req.body.username,
         password: req.body.password
     }
     userRepo.login(user)
-    .then(row => {
-         if (row.length > 0) {
+    .then(rows => {
+        if (rows.length > 0) {
             res.json({
                 msg: 'login success'
+            })
+        } else {
+            res.json({
+                msg: 'Wrong account !'
             })
         }
     })
@@ -95,6 +98,6 @@ router.get('/login', (req, res) => {
         res.statusCode = 500;
         res.end('View error log on console');
     })
-})
+});
 
 module.exports = router;

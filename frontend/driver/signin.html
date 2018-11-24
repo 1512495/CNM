@@ -67,7 +67,7 @@ input[type=button]:hover {
             <input type="password" id="password" name="password" placeholder="Password" required>
 
             <br>
-            <input type="submit" value="Sign In" id="btnSignIn">
+            <input type="button" value="Sign In" id="btnSignIn">
         </form>
     </div>
 
@@ -76,20 +76,22 @@ input[type=button]:hover {
   <script type="text/javascript">
       
        document.getElementById("btnSignIn").addEventListener("click", function () {
-            
-                axios.get('http://localhost:3000/user/login', {
+            axios.get('http://localhost:3000/login').then((res) => {
+                var token = res.data.acToken;
+                
+                axios.post('http://localhost:3000/user/login', {
+                    token: token,
                     username: document.getElementById("username").value,
                     password: document.getElementById("password").value
                 })
                 .then(function (response) {
-                    alert(response);
-                    console.log(response);
-                    window.location.href = "./index.html";
+                    alert(response.data.msg);
+                    console.log(response.data.msg);
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
-           
+            });
         });
   </script>
 </body>
