@@ -25,9 +25,6 @@ app.get('/login', (req, res) => {
     var userEntity = {
         username: 1,
         password: 'raw pwd',
-        name: 'Tấn Phan',
-        accountType: 1,
-        status: 0
     }
     var acToken = authRepo.generateAccessToken(userEntity);
     res.json({

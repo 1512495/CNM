@@ -28,6 +28,6 @@ exports.updateLocation = (user) => {
 
 exports.login = (user) => {
     var pass = md5(user.password);
-    var sql = `select * from user where username = ${user.username} and password = ${pass}`;
+    var sql = `select * from user where username = '${user.username}' and password = '${pass}'`;
     return db.load(sql);
 }

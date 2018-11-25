@@ -71,6 +71,8 @@ input[type=button]:hover {
         </form>
     </div>
 
+   
+
 
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script type="text/javascript">
@@ -86,10 +88,10 @@ input[type=button]:hover {
                 })
                 .then(function (response) {
                     alert(response.data.msg);
-                    console.log(response.data.msg);
+                    //console.log(response.data.msg);
                 })
                 .catch(function (error) {
-                    console.log(error);
+                   // console.log(error);
                 });
             });
         });

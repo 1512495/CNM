@@ -40,7 +40,6 @@ router.post('/', (req, res) => {
         accountType_id: 1,
         status: 0
     }
-    console.log(user);
 
     userRepo.add(user)
     .then(value => {
@@ -82,15 +81,16 @@ router.post('/login', (req, res) => {
         username: req.body.username,
         password: req.body.password
     }
+
     userRepo.login(user)
     .then(rows => {
         if (rows.length > 0) {
             res.json({
-                msg: 'login success'
+                code: 1
             })
         } else {
             res.json({
-                msg: 'Wrong account !'
+                code: 0
             })
         }
     })

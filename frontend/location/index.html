@@ -69,9 +69,16 @@
             font-size: 20px;
         }
     </style>
+    <script type="text/javascript">
+       window.onload = function(e){ 
+            alert(2);
+       }
+  </script>
 </head>
 
 <body style="margin-left: 20%">
+    
+
     <div class="container" style="width: 60%;">
         <h3>Location Indentifier</h3>
         <div id="map" style="width: 100%;height: 300px; border: 1px solid black"></div>
@@ -84,6 +91,43 @@
 
         <table id="list" style="border: 5px;"></table>
     </div>
+
+    <!-- Modal Login-->
+  <div class="modal fade" id="modalLogin" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="padding:35px 50px;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4><span class="glyphicon glyphicon-lock"></span> Login</h4>
+        </div>
+        <div class="modal-body" style="padding:40px 50px;">
+          <form role="form">
+            <div class="form-group">
+              <label for="username"><span class="glyphicon glyphicon-user"></span> Username</label>
+              <input type="text" class="form-control" id="username" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+              <label for="password"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
+              <input type="text" class="form-control" id="password" placeholder="Enter password">
+            </div>
+           <!--  <div class="checkbox">
+              <label><input type="checkbox" value="" checked>Remember me</label>
+            </div> -->
+              <button type="button" id="btnSignIn" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Login</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" id="btnCancel" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+        </div>
+      </div>
+      
+    </div>
+  </div> 
+
+
+
     <script id="template" type="text/x-handlebars-template">
         <tr>
             <th>id</th>
@@ -128,7 +172,35 @@
 
     <script>
 
+         window.onload = function(e){ 
+            // $(".container").hide();
+            // $("#modalLogin").modal();
 
+            //  $("#btnSignIn").click(function(){
+            //      axios.get('http://localhost:3000/login').then((res) => {
+            //         var token = res.data.acToken;
+                    
+            //         axios.post('http://localhost:3000/user/login', {
+            //             token: token,
+            //             username: document.getElementById("username").value,
+            //             password: document.getElementById("password").value
+            //         })
+            //         .then(function (response) {
+                       
+            //             if(response.data.code === 1) {
+            //                 $("#btnCancel").click();
+            //                 $(".container").show();
+            //             } else if(response.data.code === 0) {
+            //                  alert("Wrong account !"); 
+            //             }
+            //         })
+            //         .catch(function (error) {
+            //            console.log(error);
+            //         });
+            //     });
+            //  });
+          alert(1);
+        }
 
         let list;
         let current = null;
