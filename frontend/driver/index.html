@@ -162,10 +162,11 @@ input[type=checkbox] {
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Thông tin tài xế</h4>
+                    <h4 class="modal-title">Thông tin chuyến xe</h4>
                 </div>
                 <div class="modal-body" v-if="user">
-                    Có một chuyến xe lmao
+                    Có một chuyến xe
+                    <div id="information"></div>
                     <div id="clock"></div>
                 </div>
                 <div class="modal-footer">
@@ -296,7 +297,12 @@ input[type=checkbox] {
 
         var socket = io('http://localhost:3000');
         socket.on('request for driver', function (msg) {
-            console.log(msg);
+            if (2 == msg.driverId) {
+                socket.emit("driver status", { id: 2, status: STATUS_NOT_READY });
+                console.log(msg);
+                showModal();
+                $('#information').html(msg.request.address);
+            }
         });
         var seconds;
         var driverID, status;
@@ -329,11 +335,16 @@ input[type=checkbox] {
 
 
         function decline() {
-            $('#decline').click(function () {
-                socket.emit("driver declined", { id: driverID, status: 0 });
-            });
+            console.log('decline')
+            $('#decline').click();
+            socket.emit("driver declined", { id: 2, status: STATUS_NOT_READY });
         }
 
+        function accept() {
+            $('#accept').click(function () {
+                socket.emit("driver accept", { id: driverID, status: 0 });
+            });
+        }
 
         function showModal() {
             $("#myModal").modal({ backdrop: 'static', keyboard: false });

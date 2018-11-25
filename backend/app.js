@@ -60,17 +60,27 @@ function getPendingRequest() {
     });
 }
 
-setInterval(function () {
+setInterval(() => {
     getPendingRequest();
     if (listRequest) {
         currentRequest = listRequest[0];
         sendRequestToDriver(listRequest[0]);
+        console.log(currentRequest);
     }
 }, 15000);
 
 async function sendRequestToDriver(request) {
-    currentDriver = await getClosestDriver(request);
-    await io.emit("request for driver", { driverId: 2, request: request });
+    if (driverList) {
+        currentDriver = await getClosestDriver(request);
+        for (let i = 0; i < driverList.length; i++) {
+            if (driverList[i].id == currentDriver.id) {
+                await io.sockets.emit("request for driver", { driverId: currentDriver.id, request: request });
+            }
+            else {
+                console.log("Cannot found")
+            }
+        }
+    }
 }
 
 function getClosestDriver(request) {
@@ -132,9 +142,7 @@ io.on('connection', (socket) => {
                 }
             }
         }
-        if (listRequest) {
-            console.log(listRequest[1]);
-        }
+        console.log(driverList);
     });
 
     socket.on("driver accept request", (data) => {
@@ -150,4 +158,6 @@ io.on('connection', (socket) => {
         console.log("Tài xế đã từ chối");
         console.log(data);
     });
+
+
 })
