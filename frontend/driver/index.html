@@ -120,6 +120,52 @@ input[type=checkbox] {
     left: 49px;
     background: #4CAF50;
 }
+@media only screen and (max-width: 360px) {
+	[class="container"] {
+		height: 100%;	
+	}
+    [id="map"] {
+		height: 390px !important;
+	}
+}
+@media only screen and (max-width: 411px) and (min-height: 731px) {
+	[class="container"] {
+		height: 100%;
+        padding: 50px;	
+	}
+}
+@media only screen and (max-width: 411px) and (min-height: 823px) {
+	[class="container"] {
+		height: 100%;
+        padding: 70px;	
+	}
+    [id="map"] {
+		height: 470px !important;
+	}
+}
+@media only screen and (max-width: 320px) and (min-height: 568px) {
+	[class="container"] {
+		height: 100%;
+	}
+    [id="map"] {
+		height: 300px !important;
+	}
+}
+@media only screen and (max-width: 414px) and (min-height: 736px) {
+	[class="container"] {
+		height: 100%;
+        padding: 50px;	
+	}
+}
+@media only screen and (max-width: 375px) and (min-height: 812px) {
+	[class="container"] {
+		height: 100%;
+        padding: 70px;	
+	}
+    [id="map"] {
+		height: 460px !important;
+	}
+}
 </style>
 
 </head>
@@ -146,9 +192,9 @@ input[type=checkbox] {
         <div id="request">
 
         </div>
-        <form action="">
+        <form action="" style="margin-bottom: 20px;">
             <input type="button" class="margin" value="Bắt đầu" id="btnStart">
-            <input type="button" class="margin" value="Kết thúc" id="btnEnd">
+            <input type="button" value="Kết thúc" id="btnEnd">
         </form>
 
 
