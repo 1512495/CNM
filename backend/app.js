@@ -40,20 +40,20 @@ app.get('/login', (req, res) => {
 })
 
 
-app.get('/moi', (req, res) => {
-    console.log("ss: " + req.session.profileName);
-    if(req.session.profileName) {
+// app.get('/moi', (req, res) => {
+//     console.log("ss: " + req.session.profileName);
+//     if(req.session.profileName) {
         
-        res.json({
-            status: 1
-        })
-    } else {
-        res.json({
-            status: 0
-        })
-    }
+//         res.json({
+//             status: 1
+//         })
+//     } else {
+//         res.json({
+//             status: 0
+//         })
+//     }
     
-});
+// });
 
 app.get('/', function (req, res) {
     res.sendStatus(200);

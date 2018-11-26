@@ -84,7 +84,7 @@
                         note: document.getElementById("note").value
                     })
                     .then(function (response) {
-                        alert("added");
+                        alert("Đặt xe thành công");
                         console.log(response);
                         socket.emit("submit");
                     })

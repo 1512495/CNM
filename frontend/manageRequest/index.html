@@ -64,6 +64,12 @@
 		</table>
 		
 	</div>
+
+	<div  style="float: right;">
+        <p id="profile"></p>
+        <p id="logout"><a href="">Logout</a></p>
+    </div>
+
 	<div id="map"></div>
 
 
@@ -174,11 +180,25 @@
 			}
 		});
 
-		 window.onload = function(e){ 
+		  window.onload = function(e){ 
+
+           var isLogin =  sessionStorage.getItem("isLogin");
+           if(isLogin === "true") {
+                var profileName =  sessionStorage.getItem("profileName");
+                $("#profile").html(profileName);
+           } else {
+                showLoginForm();
+           }
+       }
+
+
+       function showLoginForm() {
+            sessionStorage.removeItem("isLogin");
+
             $("#app").hide();
             $("#modalLogin").modal();
 
-             $("#btnSignIn").click(function(){
+            $("#btnSignIn").click(function(){
                  axios.get('http://localhost:3000/login').then((res) => {
                     var token = res.data.acToken;
                     
@@ -192,6 +212,9 @@
                         if(response.data.code === 1) {
                             $("#btnCancel").click();
                             $("#app").show();
+                            $("#profile").html(response.data.profileName);
+                            sessionStorage.setItem("isLogin", "true");
+                            sessionStorage.setItem("profileName", response.data.profileName);
                         } else if(response.data.code === 0) {
                              alert("Wrong account !"); 
                         }
@@ -200,9 +223,12 @@
                        console.log(error);
                     });
                 });
-             });
-          
-        }
+            });
+       }
+        
+        $("#logout").click(function() {
+            showLoginForm();
+        });
 
 
 		let data;

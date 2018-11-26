@@ -100,18 +100,6 @@ text-align: left;
      <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
      <script type="text/javascript">
 
-        window.onload = function(e){ 
-            alert("window.onload"); 
-          
-        }
-
-        function clearInput() {
-            document.getElementById("username").value = "";
-            document.getElementById("password").value = "";
-            document.getElementById("name").value = "";
-            document.getElementById("phone").value = "";
-            document.getElementById("confirm").value = "";
-        }
 
         document.getElementById("btnSignUp").addEventListener("click", function () {
             var username =  document.getElementById("username").value;
@@ -138,7 +126,7 @@ text-align: left;
                         })
                         .then(function (response) {
                             alert(response.data.msg);
-                            clearInput()
+                            window.location.href = "./index.html";
                         })
                         .catch(function (error) {
                             console.log(error);
