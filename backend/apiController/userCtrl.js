@@ -75,6 +75,7 @@ router.post('/updateLocation', (req, res) =>{
 })
 
 
+
 router.post('/login', (req, res) => {
 
     var user = {
@@ -85,8 +86,10 @@ router.post('/login', (req, res) => {
     userRepo.login(user)
     .then(rows => {
         if (rows.length > 0) {
+            req.session.profileName = req.body.username;
             res.json({
-                code: 1
+                code: 1,
+                profileName: req.session.profileName
             })
         } else {
             res.json({

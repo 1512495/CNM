@@ -2,6 +2,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     morgan = require('morgan'),
     cors = require('cors');
+var session = require('express-session');
 var requestRepo = require('./repo/requestRepo');
 var app = express();
 var http = require('http').Server(app);
@@ -16,6 +17,12 @@ var verifyAccessToken = require('./repo/authRepo').verifyAccessToken;
 app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}))
 
 
 app.use('/user', verifyAccessToken, userCtrl);
@@ -31,6 +38,22 @@ app.get('/login', (req, res) => {
         acToken
     });
 })
+
+
+app.get('/moi', (req, res) => {
+    console.log("ss: " + req.session.profileName);
+    if(req.session.profileName) {
+        
+        res.json({
+            status: 1
+        })
+    } else {
+        res.json({
+            status: 0
+        })
+    }
+    
+});
 
 app.get('/', function (req, res) {
     res.sendStatus(200);

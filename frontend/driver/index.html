@@ -150,6 +150,12 @@ input[type=checkbox] {
             <input type="button" class="margin" value="Bắt đầu" id="btnStart">
             <input type="button" class="margin" value="Kết thúc" id="btnEnd">
         </form>
+
+
+        <div id="profile">
+            <!-- <p>Phan Văn Tấn</p>
+            <p>Logout</p> -->
+        </div>
     </div>
 
 
@@ -219,33 +225,71 @@ input[type=checkbox] {
 
     <script>
          window.onload = function(e){ 
-            $(".container").hide();
-            $("#modalLogin").modal();
 
-             $("#btnSignIn").click(function(){
-                 axios.get('http://localhost:3000/login').then((res) => {
-                    var token = res.data.acToken;
+
+            // $(".container").hide();
+            // $("#modalLogin").modal();
+
+            // $("#btnSignIn").click(function(){
+            //      axios.get('http://localhost:3000/login').then((res) => {
+            //         var token = res.data.acToken;
                     
-                    axios.post('http://localhost:3000/user/login', {
-                        token: token,
-                        username: document.getElementById("username").value,
-                        password: document.getElementById("password").value
-                    })
-                    .then(function (response) {
+            //         axios.post('http://localhost:3000/user/login', {
+            //             token: token,
+            //             username: document.getElementById("username").value,
+            //             password: document.getElementById("password").value
+            //         })
+            //         .then(function (response) {
                        
-                        if(response.data.code === 1) {
-                            $("#btnCancel").click();
-                            $(".container").show();
-                        } else if(response.data.code === 0) {
-                             alert("Wrong account !"); 
-                        }
-                    })
-                    .catch(function (error) {
-                       console.log(error);
+            //             if(response.data.code === 1) {
+            //                 $("#btnCancel").click();
+            //                 $(".container").show();
+            //                 $("#profile").html(response.data.profileName);
+            //             } else if(response.data.code === 0) {
+            //                  alert("Wrong account !"); 
+            //             }
+            //         })
+            //         .catch(function (error) {
+            //            console.log(error);
+            //         });
+            //     });
+            // });
+
+            axios.get('http://localhost:3000/moi').then((resp) => {
+                if(resp.data.status === 0) {
+                     $(".container").hide();
+                    $("#modalLogin").modal();
+
+                    $("#btnSignIn").click(function(){
+                         axios.get('http://localhost:3000/login').then((res) => {
+                            var token = res.data.acToken;
+                            
+                            axios.post('http://localhost:3000/user/login', {
+                                token: token,
+                                username: document.getElementById("username").value,
+                                password: document.getElementById("password").value
+                            })
+                            .then(function (response) {
+                               
+                                if(response.data.code === 1) {
+                                    $("#btnCancel").click();
+                                    $(".container").show();
+                                    $("#profile").html(response.data.profileName);
+                                } else if(response.data.code === 0) {
+                                     alert("Wrong account !"); 
+                                }
+                            })
+                            .catch(function (error) {
+                               console.log(error);
+                            });
+                        });
                     });
-                });
-             });
-          
+
+                } else {
+                    alert("Đã đăng nhập");
+                }
+            });
+                   
         }
         // $(document).ready(function(){
         //     $("#btnLogin").click(function(){
