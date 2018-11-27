@@ -65,6 +65,7 @@
 
 
     <script src="./public/js/index.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript">
         var socket = io('http://localhost:3000');
@@ -75,7 +76,7 @@
            
                 axios.get('http://localhost:3000/login').then((res) => {
                     var token = res.data.acToken;
-                    console.log(token);
+
                     axios.post('http://localhost:3000/request', {
                         token: token,
                         name: document.getElementById("name").value,
@@ -85,7 +86,7 @@
                     })
                     .then(function (response) {
                         alert("Đặt xe thành công");
-                        console.log(response);
+                        clearInput();
                         socket.emit("submit");
                     })
                     .catch(function (error) {
@@ -93,6 +94,14 @@
                     });
                 })
         });
+
+
+        function clearInput() {
+           $("#name").val("");
+           $("#phone").val("");
+           $("#address").val("");
+           $("#note").val("");
+        }
     </script>
 
 </body>

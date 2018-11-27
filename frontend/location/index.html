@@ -71,11 +71,6 @@
             font-size: 20px;
         }
     </style>
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> 2c55e35fbdfaf3a91e72e841cd5ace342107de33
 </head>
 
 <body style="margin-left: 20%">
@@ -88,6 +83,11 @@
         <div class="wrapper">
             <div id="current">Đang định vị cho: </div>
             <div style="float: right;"><input id="update" type="button" value="Cập nhật tọa độ" style="width: 40%;"></div>
+        </div>
+
+        <div  style="float: right;">
+            <p id="profile"></p>
+            <p id="logout"><a href="">Logout</a></p>
         </div>
 
 
@@ -175,38 +175,92 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js"></script>
 
     <script>
+        window.onload = function(e){ 
 
-        window.onload = function (e) {
+           var isLogin =  sessionStorage.getItem("isLogin");
+           if(isLogin === "true") {
+                loadUser();
+                var profileName =  sessionStorage.getItem("profileName");
+                $("#profile").html(profileName);
+           } else {
+                showLoginForm();
+           }
+       }
 
-            $(".container").hide();
+
+       function showLoginForm() {
+            sessionStorage.removeItem("isLogin");
+            sessionStorage.removeItem("profileName");
+
+            $("#app").hide();
             $("#modalLogin").modal();
 
-            $("#btnSignIn").click(function () {
-                axios.get('http://localhost:3000/login').then((res) => {
+            $("#btnSignIn").click(function(){
+                 axios.get('http://localhost:3000/login').then((res) => {
                     var token = res.data.acToken;
-
+                    
                     axios.post('http://localhost:3000/user/login', {
                         token: token,
                         username: document.getElementById("username").value,
                         password: document.getElementById("password").value
                     })
-                        .then(function (response) {
-
-                            if (response.data.code === 1) {
-                                $("#btnCancel").click();
-                                $(".container").show();
-                            } else if (response.data.code === 0) {
-                                alert("Wrong account !");
-                            }
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
+                    .then(function (response) {
+                       
+                        if(response.data.code === 1) {
+                            $("#btnCancel").click();
+                            $("#app").show();
+                            $("#profile").html(response.data.profileName);
+                            sessionStorage.setItem("isLogin", "true");
+                            sessionStorage.setItem("profileName", response.data.profileName);
+                            
+                            loadUser();
+                        } else if(response.data.code === 0) {
+                             alert("Wrong account !"); 
+                        }
+                    })
+                    .catch(function (error) {
+                       console.log(error);
+                    });
                 });
             });
-            loadUser();
+           
+       }
+        
+        $("#logout").click(function() {
+            showLoginForm();
+        });
 
-        }
+        // window.onload = function (e) {
+
+        //     $(".container").hide();
+        //     $("#modalLogin").modal();
+
+        //     $("#btnSignIn").click(function () {
+        //         axios.get('http://localhost:3000/login').then((res) => {
+        //             var token = res.data.acToken;
+
+        //             axios.post('http://localhost:3000/user/login', {
+        //                 token: token,
+        //                 username: document.getElementById("username").value,
+        //                 password: document.getElementById("password").value
+        //             })
+        //                 .then(function (response) {
+
+        //                     if (response.data.code === 1) {
+        //                         $("#btnCancel").click();
+        //                         $(".container").show();
+        //                     } else if (response.data.code === 0) {
+        //                         alert("Wrong account !");
+        //                     }
+        //                 })
+        //                 .catch(function (error) {
+        //                     console.log(error);
+        //                 });
+        //         });
+        //     });
+        //     loadUser();
+
+        // }
 
         let list;
         let current = null;

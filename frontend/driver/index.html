@@ -291,6 +291,7 @@ input[type=checkbox] {
 
         function showLoginForm() {
             sessionStorage.removeItem("isLogin");
+            sessionStorage.removeItem("profileName");
 
             $(".container").hide();
             $("#modalLogin").modal();

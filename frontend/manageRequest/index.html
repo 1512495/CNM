@@ -180,7 +180,7 @@
 			}
 		});
 
-		  window.onload = function(e){ 
+		window.onload = function(e){ 
 
            var isLogin =  sessionStorage.getItem("isLogin");
            if(isLogin === "true") {
@@ -194,6 +194,7 @@
 
        function showLoginForm() {
             sessionStorage.removeItem("isLogin");
+            sessionStorage.removeItem("profileName");
 
             $("#app").hide();
             $("#modalLogin").modal();
