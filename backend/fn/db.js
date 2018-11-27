@@ -1,4 +1,4 @@
-var mysql = require('mysql');
+ var mysql = require('mysql');
 
 exports.load = sql => {
     return new Promise((resolve, reject) => {
@@ -6,7 +6,7 @@ exports.load = sql => {
             host: 'localhost',
             port: 3306,
             user: 'root',
-            password: '',
+            password: '123456',
             database: 'datxe'
         });
 
@@ -35,7 +35,7 @@ exports.save = sql => {
             host: 'localhost',
             port: 3306,
             user: 'root',
-            password: '',
+            password: '123456',
             database: 'datxe'
         });
 

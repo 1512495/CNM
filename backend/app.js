@@ -11,6 +11,7 @@ var io = require('socket.io')(http);
 var requestCtrl = require('./apiController/requestCtrl');
 var userCtrl = require('./apiController/userCtrl');
 var authRepo = require('./repo/authRepo');
+var requestRepo = require('./repo/requestRepo');
 var verifyAccessToken = require('./repo/authRepo').verifyAccessToken;
 
 
@@ -18,10 +19,10 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(session({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: true }
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }
 }))
 
 
@@ -43,7 +44,7 @@ app.get('/login', (req, res) => {
 // app.get('/moi', (req, res) => {
 //     console.log("ss: " + req.session.profileName);
 //     if(req.session.profileName) {
-        
+
 //         res.json({
 //             status: 1
 //         })
@@ -52,7 +53,7 @@ app.get('/login', (req, res) => {
 //             status: 0
 //         })
 //     }
-    
+
 // });
 
 app.get('/', function (req, res) {
@@ -80,14 +81,16 @@ function getPendingRequest() {
     });
 }
 
-setInterval(() => {
-    getPendingRequest();
-    if (listRequest) {
-        currentRequest = listRequest[0];
-        sendRequestToDriver(listRequest[0]);
-        console.log(currentRequest);
+setInterval(async () => {
+    if (listRequest.length == 0) {
+        await getPendingRequest();
     }
-}, 15000);
+    if (listRequest) {
+        currentRequest = await listRequest[0];
+        await sendRequestToDriver(listRequest[0]);
+        await console.log(currentRequest);
+    }
+}, 20000);
 
 async function sendRequestToDriver(request) {
     if (driverList) {
@@ -165,19 +168,36 @@ io.on('connection', (socket) => {
         console.log(driverList);
     });
 
-    socket.on("driver accept request", (data) => {
-        console.log("Tài xế đã nhận");
+    socket.on("driver accept", (data) => {
+        for (let i = 0; i < listRequest.length; i++) {
+            if (currentRequest.id == listRequest[i].id) {
+                requestRepo.updateStatus({ id: currentRequest.id, status: 2 });
+                listRequest.pop(i);
+            }
+        }
+
         console.log(data);
         for (let i = 0; i < driverList.length; i++) {
             if (data.id == driverList[i].id) {
                 driverList.pop(i);
             }
         }
+        socket.broadcast.emit('new address added');
     });
-    socket.on("driver decline request", (data) => {
-        console.log("Tài xế đã từ chối");
+    socket.on("driver decline", (data) => {
+        for (let i = 0; i < listRequest.length; i++) {
+            if (currentRequest.id == listRequest[i].id) {
+                listRequest.pop(i);
+            }
+        }
+        socket.broadcast.emit('new address added');
+    });
+
+    socket.on("driver done", (data) => {
+        console.log("Tài xế đã thực hiện xong");
         console.log(data);
+        requestRepo.updateStatus({ id: data.request.id, status: 4 });
+        socket.broadcast.emit('new address added');
+        getPendingRequest();
     });
-
-
 })

@@ -194,18 +194,18 @@ input[type=checkbox] {
         </div>
         <form action="" style="margin-bottom: 20px;">
             <input type="button" class="margin" value="Bắt đầu" id="btnStart">
-            <input type="button" value="Kết thúc" id="btnEnd">
+            <input type="button" value="Kết thúc" id="btnEnd" disabled>
         </form>
 
 
-        <div  style="float: right;">
+        <div style="float: right;">
             <p id="profile"></p>
             <p id="logout"><a href="">Logout</a></p>
         </div>
     </div>
 
 
-    
+
     <!-- Modal Request-->
     <div class="modal fade" id="myModal" role="dialog">
         <div class="modal-dialog">
@@ -222,101 +222,110 @@ input[type=checkbox] {
                     <div id="clock"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="accept">Nhận</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id="decline">Không nhận</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="accept" onclick="acceptRequest()">Nhận</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="decline" onclick="declineRequest()">Không
+                        nhận</button>
                 </div>
             </div>
 
         </div>
     </div>
 
-   
-  
 
-  <!-- Modal Login-->
-  <div class="modal fade" id="modalLogin" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header" style="padding:35px 50px;">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4><span class="glyphicon glyphicon-lock"></span> Login</h4>
-        </div>
-        <div class="modal-body" style="padding:40px 50px;">
-          <form role="form">
-            <div class="form-group">
-              <label for="username"><span class="glyphicon glyphicon-user"></span> Username</label>
-              <input type="text" class="form-control" id="username" placeholder="Enter username">
-            </div>
-            <div class="form-group">
-              <label for="password"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
-              <input type="password" class="form-control" id="password" placeholder="Enter password">
-            </div>
-           <!--  <div class="checkbox">
+
+
+    <!-- Modal Login-->
+    <div class="modal fade" id="modalLogin" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="padding:35px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4><span class="glyphicon glyphicon-lock"></span> Login</h4>
+                </div>
+                <div class="modal-body" style="padding:40px 50px;">
+                    <form role="form">
+                        <div class="form-group">
+                            <label for="username"><span class="glyphicon glyphicon-user"></span> Username</label>
+                            <input type="text" class="form-control" id="username" placeholder="Enter username">
+                        </div>
+                        <div class="form-group">
+                            <label for="password"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Enter password">
+                        </div>
+                        <!--  <div class="checkbox">
               <label><input type="checkbox" value="" checked>Remember me</label>
             </div> -->
-              <button type="button" id="btnSignIn" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Login</button>
-          </form>
+                        <button type="button" id="btnSignIn" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span>
+                            Login</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="btnCancel" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span
+                            class="glyphicon glyphicon-remove"></span> Cancel</button>
+                </div>
+            </div>
+
         </div>
-        <div class="modal-footer">
-          <button type="submit" id="btnCancel" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
-        </div>
-      </div>
-      
     </div>
-  </div> 
 
 
 
     <script>
-        window.onload = function(e){ 
+        var seconds;
+        var driverID, status;
+        var request;
+        window.onload = function (e) {
 
-           var isLogin =  sessionStorage.getItem("isLogin");
-           if(isLogin === "true") {
-                var profileName =  sessionStorage.getItem("profileName");
+            var isLogin = sessionStorage.getItem("isLogin");
+            if (isLogin === "true") {
+                var profileName = sessionStorage.getItem("profileName");
+                driverID = sessionStorage.getItem("id");
                 $("#profile").html(profileName);
-           } else {
+            } else {
                 showLoginForm();
-           }
-       }
+            }
+        }
 
 
-       function showLoginForm() {
+        function showLoginForm() {
             sessionStorage.removeItem("isLogin");
 
             $(".container").hide();
             $("#modalLogin").modal();
 
-            $("#btnSignIn").click(function(){
-                 axios.get('http://localhost:3000/login').then((res) => {
+            $("#btnSignIn").click(function () {
+                axios.get('http://localhost:3000/login').then((res) => {
                     var token = res.data.acToken;
-                    
+
                     axios.post('http://localhost:3000/user/login', {
                         token: token,
                         username: document.getElementById("username").value,
                         password: document.getElementById("password").value
                     })
-                    .then(function (response) {
-                       
-                        if(response.data.code === 1) {
-                            $("#btnCancel").click();
-                            $(".container").show();
-                            $("#profile").html(response.data.profileName);
-                            sessionStorage.setItem("isLogin", "true");
-                            sessionStorage.setItem("profileName", response.data.profileName);
-                        } else if(response.data.code === 0) {
-                             alert("Wrong account !"); 
-                        }
-                    })
-                    .catch(function (error) {
-                       console.log(error);
-                    });
+                        .then(function (response) {
+
+                            if (response.data.code === 1) {
+                                $("#btnCancel").click();
+                                $(".container").show();
+                                $("#profile").html(response.data.profileName);
+                                sessionStorage.setItem("isLogin", "true");
+                                sessionStorage.setItem("profileName", response.data.profileName);
+                                sessionStorage.setItem("id", response.data.id);
+                                driverID = response.data.id;
+                            } else if (response.data.code === 0) {
+                                alert("Wrong account !");
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
                 });
             });
-       }
-        
-        $("#logout").click(function() {
+        }
+
+        $("#logout").click(function () {
             showLoginForm();
         });
 
@@ -440,57 +449,69 @@ input[type=checkbox] {
 
         var socket = io('http://localhost:3000');
         socket.on('request for driver', function (msg) {
-            if (2 == msg.driverId) {
-                socket.emit("driver status", { id: 2, status: STATUS_NOT_READY });
+            if (driverID == msg.driverId) {
+                document.getElementById('state').value = 0;
+                document.getElementById('state').checked = 0;
+                socket.emit("driver status", { id: driverID, status: STATUS_NOT_READY });
                 console.log(msg);
+                request = msg.request;
                 showModal();
                 $('#information').html(msg.request.address);
             }
         });
-        var seconds;
-        var driverID, status;
+
 
 
 
         document.getElementById('btnStart').onclick = function () {
+            $('#btnEnd').removeAttr('disabled');
             document.getElementById('state').value = 0;
             document.getElementById('state').checked = 0;
-            socket.emit("driver status", { id: 2, status: STATUS_NOT_READY });
+            socket.emit("driver status", { id: driverID, status: STATUS_NOT_READY });
 
         };
         document.getElementById('btnEnd').onclick = function () {
+            $("#btnEnd").attr('disabled', 'disabled');
             document.getElementById('state').value = 1;
             document.getElementById('state').checked = 1;
-            socket.emit("driver status", { id: 2, status: STATUS_READY, lat: lat, lng: long });
+            socket.emit("driver status", { id: driverID, status: STATUS_READY, lat: lat, lng: long });
+            socket.emit("driver done", { request: request });
         };
         document.getElementById('state').onclick = function () {
             // Thông báo cho server là ready hoặc không ready
             if (document.getElementById('state').value == 1) {
                 document.getElementById('state').value = 0;
-                socket.emit("driver status", { id: 2, status: STATUS_NOT_READY });
+                socket.emit("driver status", { id: driverID, status: STATUS_NOT_READY });
             }
             else {
                 document.getElementById('state').value = 1;
-                socket.emit("driver status", { id: 2, status: STATUS_READY });
+                socket.emit("driver status", { id: driverID, status: STATUS_READY });
             }
             console.log(document.getElementById('state').value);
         };
 
 
+        function acceptRequest() {
+            socket.emit("driver accept", { id: driverID, status: STATUS_NOT_READY });
+        }
+
+        function declineRequest() {
+            socket.emit("driver decline", { id: driverID, status: STATUS_NOT_READY });
+        }
+
         function decline() {
-            console.log('decline')
             $('#decline').click();
-            socket.emit("driver declined", { id: 2, status: STATUS_NOT_READY });
+            socket.emit("driver decline", { id: driverID, status: STATUS_NOT_READY });
         }
 
         function accept() {
-            $('#accept').click(function () {
-                socket.emit("driver accept", { id: driverID, status: 0 });
-            });
+            $('#accept').click();
+            socket.emit("driver accept", { id: driverID, status: STATUS_NOT_READY });
         }
 
         function showModal() {
             $("#myModal").modal({ backdrop: 'static', keyboard: false });
+
             seconds = new Date().getTime() + 10000;
             $('#clock').countdown(seconds, { elapse: false })
                 .on('update.countdown', function (event) {
@@ -498,7 +519,9 @@ input[type=checkbox] {
                     $this.html(event.strftime('Thời gian còn lại để nhận chuyến xe: <span>%H:%M:%S</span>'));
                 })
                 .on('finish.countdown', function () {
-                    decline();
+                    if ($('#myModal').hasClass('in')) {
+                        decline();
+                    }
                 });;
         }
 
@@ -507,7 +530,7 @@ input[type=checkbox] {
                 var token = response.data.acToken;
                 axios.post('http://localhost:3000/user/updateLocation', {
                     token: token,
-                    id: 2,
+                    id: driverID,
                     lat: lat,
                     long: long,
                 })

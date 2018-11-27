@@ -89,6 +89,8 @@ router.post('/login', (req, res) => {
             req.session.profileName = req.body.username;
             res.json({
                 code: 1,
+                id: rows[0].id,
+                phone: rows[0].id,
                 profileName: req.session.profileName
             })
         } else {

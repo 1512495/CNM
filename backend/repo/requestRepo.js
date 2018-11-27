@@ -17,6 +17,11 @@ exports.add = (request) => {
     return db.save(sql);
 }
 
+exports.updateStatus = request => {
+    var sql = `update request set status = ${request.status} where id = ${request.id}`;
+    return db.save(sql);
+}
+
 
 exports.updateCoordinate = (request) => {
     console.log(request.reserve_geocode_address);
