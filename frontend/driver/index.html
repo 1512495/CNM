@@ -362,13 +362,19 @@ input[type=checkbox] {
         const STATUS_READY = 1;
         const STATUS_NOT_READY = 0;
         var lat, long;
+        var directionsService;
+        var directionsDisplay;
 
         function initMap() {
+            directionsService = new google.maps.DirectionsService;
+            directionsDisplay = new google.maps.DirectionsRenderer;
             var mapDiv = document.getElementById('map');
             var map = new google.maps.Map(mapDiv, {
                 center: { lat: 10.762622, lng: 106.660172 },
                 zoom: 15
             });
+
+            directionsDisplay.setMap(map);
             var marker;
             var currentLat, currentLng;
             google.maps.event.addListener(map, 'click', function (event) {
@@ -492,6 +498,17 @@ input[type=checkbox] {
 
 
         function acceptRequest() {
+            directionsService.route({
+                origin: { lat: lat, lng: long },
+                destination: { lat: request.latitude, lng: request.longitude },
+                travelMode: 'DRIVING'
+            }, function (response, status) {
+                if (status === 'OK') {
+                    directionsDisplay.setDirections(response);
+                } else {
+                    window.alert('Directions request failed due to ' + status);
+                }
+            });
             socket.emit("driver accept", { id: driverID, status: STATUS_NOT_READY });
         }
 
