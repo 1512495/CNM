@@ -19,59 +19,105 @@
             padding: 0;
         }
 
-        table, th, td {
-            border: 2px solid black;
-            border-collapse: collapse;
-        }
-
         #map {
             height: 100%;
+        }
+
+		.container {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px;
+            text-align: center;
+            margin: auto; 
+            position: absolute; 
+
+        }
+		input[type=button] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type=button]:hover {
+            background-color: #45a049;
+        }
+
+		table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: white;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th, .align {text-align: center}
+        tr:hover {background-color:#f5f5f5;}
+
+		a[class="logout"]:hover {
+            color: #4CAF50;
+            text-decoration: none;
+            font-size: 14.5px;
+        }
+		.wrapper {
+            display: grid;
+            grid-template-columns: 8fr 1fr;
         }
     </style>
 </head>
 
-<body style="width: 90%;">
-
-
-	<div id="app" style="width: 90%;  overflow: auto;">
-		<table>
-			<thead>
-				<tr>
-					<th>Họ tên</th>
-					<th>Số điện thoại</th>
-					<th>Địa chỉ</th>
-					<th>Ghi chú</th>
-					<th>Trạng thái</th>
-					<th>Tài xế</th>
-				</tr>
-			</thead>
-			<tbody v-if="list">
-				<tr v-for="request in list" :title="request.id">
-					<td>{{request.name}}</td>
-					<td>{{request.phone}}</td>
-					<td>{{request.address}}</td>
-					<td>{{request.note}}</td>
-					<td v-if="request.status === 0">Chưa định vị</td>
-					<td v-else-if="request.status === 1">Đã định vị</td>
-					<td v-else-if="request.status === 2">Đã có xe nhận</td>
-					<td v-else-if="request.status === 3">Đang di chuyển</td>
-					<td v-else>Đã hoàn thành</td>
-					<td><button v-if="request.driver_id" data-toggle="modal" data-target="#myModal" @click="driverInfo(request.driver_id)">Xem
-							thông tin</button></td>
-				</tr>
-
-			</tbody>
-		</table>
+<body style="width: 90%; padding-left: 10%;">
+	<div class="container" style="width: 80%;">
+		<div class="wrapper">
+			<div style="margin-left: 100px; margin-top: -15px !important;"><h3>Request Management</h3></div>
+			<div style="float: right;">
+					<p id="profile"></p>
+					<p id="logout"><a class="logout" href="">Logout</a></p>
+			</div>
+		</div>
 		
+		
+		<div id="map" style="width: 100%;height: 300px; border: 1px solid black"></div>
+		<div style="width: 20px; height: 20px;"></div>
+		<div id="app" style="width: 100%;  overflow: auto;">
+				<table>
+					<thead>
+						<tr>
+							<th>Họ tên</th>
+							<th>Số điện thoại</th>
+							<th>Địa chỉ</th>
+							<th>Ghi chú</th>
+							<th>Trạng thái</th>
+							<th>Tài xế</th>
+							<th>#</th>
+						</tr>
+					</thead>
+					<tbody v-if="list">
+						<tr v-for="request in list" :title="request.id">
+							<td>{{request.name}}</td>
+							<td class="align">{{request.phone}}</td>
+							<td>{{request.address}}</td>
+							<td>{{request.note}}</td>
+							<td class="align" v-if="request.status === 0">Chưa định vị</td>
+							<td class="align" v-else-if="request.status === 1">Đã định vị</td>
+							<td class="align" v-else-if="request.status === 2">Đã có xe nhận</td>
+							<td class="align" v-else-if="request.status === 3">Đang di chuyển</td>
+							<td class="align" v-else>Đã hoàn thành</td>
+							<td><button v-if="request.driver_id" data-toggle="modal" data-target="#myModal" @click="driverInfo(request.driver_id)">Xem
+									thông tin</button></td>
+							<td class="align"><input type="button" value="Xem chi tiết"/>
+						</tr>
+		
+					</tbody>
+				</table>
+		
+			</div>
 	</div>
-
-	<div  style="float: right;">
-        <p id="profile"></p>
-        <p id="logout"><a href="">Logout</a></p>
-    </div>
-
-	<div id="map"></div>
-
 
 	<!-- Modal Tài xế-->
 	<div class="modal fade" id="myModal" role="dialog">
@@ -98,45 +144,44 @@
 	</div>
 
 
-		 <!-- Modal Login-->
-  	<div class="modal fade" id="modalLogin" role="dialog">
-	    <div class="modal-dialog">
-	    
-	      <!-- Modal content-->
-	      <div class="modal-content">
-	        <div class="modal-header" style="padding:35px 50px;">
-	          <button type="button" class="close" data-dismiss="modal">&times;</button>
-	          <h4><span class="glyphicon glyphicon-lock"></span> Login</h4>
-	        </div>
-	        <div class="modal-body" style="padding:40px 50px;">
-	          <form role="form">
-	            <div class="form-group">
-	              <label for="username"><span class="glyphicon glyphicon-user"></span> Username</label>
-	              <input type="text" class="form-control" id="username" placeholder="Enter username">
-	            </div>
-	            <div class="form-group">
-	              <label for="password"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
-	              <input type="password" class="form-control" id="password" placeholder="Enter password">
-	            </div>
-	           <!--  <div class="checkbox">
+	<!-- Modal Login-->
+	<div class="modal fade" id="modalLogin" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header" style="padding:35px 50px;">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4><span class="glyphicon glyphicon-lock"></span> Login</h4>
+				</div>
+				<div class="modal-body" style="padding:40px 50px;">
+					<form role="form">
+						<div class="form-group">
+							<label for="username"><span class="glyphicon glyphicon-user"></span> Username</label>
+							<input type="text" class="form-control" id="username" placeholder="Enter username">
+						</div>
+						<div class="form-group">
+							<label for="password"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
+							<input type="password" class="form-control" id="password" placeholder="Enter password">
+						</div>
+						<!--  <div class="checkbox">
 	              <label><input type="checkbox" value="" checked>Remember me</label>
 	            </div> -->
-	              <button type="button" id="btnSignIn" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Login</button>
-	          </form>
-	        </div>
-	        <div class="modal-footer">
-	          <button type="submit" id="btnCancel" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
-	        </div>
-	      </div>
-	      
-	    </div>
+						<button type="button" id="btnSignIn" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span>
+							Login</button>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" id="btnCancel" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span>
+						Cancel</button>
+				</div>
+			</div>
+
+		</div>
 	</div>
 
 
 	<script>
-
-
-
 		var vm = new Vue({
 
 			el: '#app',
@@ -150,15 +195,15 @@
 				axios.get('http://localhost:3000/login').then((response) => {
 					var token = response.data.acToken;
 					console.log(token);
-					axios.get('http://localhost:3000/request',{
+					axios.get('http://localhost:3000/request', {
 						headers: {
-                        	'x-access-token': token
-                    	}
+							'x-access-token': token
+						}
 					}).then((response1) => {
 						self.list = response1.data;
 					})
 				})
-				
+
 			},
 			methods: {
 				driverInfo: function (id) {
@@ -167,10 +212,10 @@
 					axios.get('http://localhost:3000/login').then((response) => {
 						var token = response.data.acToken;
 						console.log(token);
-						axios.get('http://localhost:3000/user/' + id,{
+						axios.get('http://localhost:3000/user/' + id, {
 							headers: {
-	                        	'x-access-token': token
-	                    	}
+								'x-access-token': token
+							}
 						}).then((response1) => {
 							self.user = response1.data[0];
 							console.log(response1.data);
@@ -180,56 +225,56 @@
 			}
 		});
 
-		window.onload = function(e){ 
+		window.onload = function (e) {
 
-           var isLogin =  sessionStorage.getItem("isLogin");
-           if(isLogin === "true") {
-                var profileName =  sessionStorage.getItem("profileName");
-                $("#profile").html(profileName);
-           } else {
-                showLoginForm();
-           }
-       }
+			var isLogin = sessionStorage.getItem("isLogin");
+			if (isLogin === "true") {
+				var profileName = sessionStorage.getItem("profileName");
+				$("#profile").html(profileName);
+			} else {
+				showLoginForm();
+			}
+		}
 
 
-       function showLoginForm() {
-            sessionStorage.removeItem("isLogin");
-            sessionStorage.removeItem("profileName");
+		function showLoginForm() {
+			sessionStorage.removeItem("isLogin");
+			sessionStorage.removeItem("profileName");
 
-            $("#app").hide();
-            $("#modalLogin").modal();
+			$("#app").hide();
+			$("#modalLogin").modal();
 
-            $("#btnSignIn").click(function(){
-                 axios.get('http://localhost:3000/login').then((res) => {
-                    var token = res.data.acToken;
-                    
-                    axios.post('http://localhost:3000/user/login', {
-                        token: token,
-                        username: document.getElementById("username").value,
-                        password: document.getElementById("password").value
-                    })
-                    .then(function (response) {
-                       
-                        if(response.data.code === 1) {
-                            $("#btnCancel").click();
-                            $("#app").show();
-                            $("#profile").html(response.data.profileName);
-                            sessionStorage.setItem("isLogin", "true");
-                            sessionStorage.setItem("profileName", response.data.profileName);
-                        } else if(response.data.code === 0) {
-                             alert("Wrong account !"); 
-                        }
-                    })
-                    .catch(function (error) {
-                       console.log(error);
-                    });
-                });
-            });
-       }
-        
-        $("#logout").click(function() {
-            showLoginForm();
-        });
+			$("#btnSignIn").click(function () {
+				axios.get('http://localhost:3000/login').then((res) => {
+					var token = res.data.acToken;
+
+					axios.post('http://localhost:3000/user/login', {
+							token: token,
+							username: document.getElementById("username").value,
+							password: document.getElementById("password").value
+						})
+						.then(function (response) {
+
+							if (response.data.code === 1) {
+								$("#btnCancel").click();
+								$("#app").show();
+								$("#profile").html(response.data.profileName);
+								sessionStorage.setItem("isLogin", "true");
+								sessionStorage.setItem("profileName", response.data.profileName);
+							} else if (response.data.code === 0) {
+								alert("Wrong account !");
+							}
+						})
+						.catch(function (error) {
+							console.log(error);
+						});
+				});
+			});
+		}
+
+		$("#logout").click(function () {
+			showLoginForm();
+		});
 
 
 		let data;
@@ -238,11 +283,11 @@
 			axios.get('http://localhost:3000/login').then((res) => {
 				var token = res.data.acToken;
 				console.log(token);
-				axios.get('http://localhost:3000/request',{
-						headers: {
-                        	'x-access-token': token
-                    	}
-	            }).then((response) => {
+				axios.get('http://localhost:3000/request', {
+					headers: {
+						'x-access-token': token
+					}
+				}).then((response) => {
 					console.log(vm);
 					if (vm) {
 						vm.list = response.data;
@@ -253,12 +298,16 @@
 	</script>
 
 
-	
+
 	<script>
 		var map;
+
 		function initMap() {
 			map = new google.maps.Map(document.getElementById('map'), {
-				center: { lat: 10.762622, lng: 106.660172 },
+				center: {
+					lat: 10.762622,
+					lng: 106.660172
+				},
 				zoom: 15
 			});
 		}
