@@ -107,12 +107,15 @@ async function sendRequestToDriver(request) {
 }
 
 function getClosestDriver(request) {
+    console.log(driverList);
     if (driverList.length > 0) {
         let min = getDistance(driverList[0].lat, driverList[0].lng, request.latitude, request.longitude);
         currentDriver = driverList[0];
-        for (let i = 0; i < driverList.length; i++) {
-            if (min < getDistance(driverList[i].lat, driverList[i].lng, request.latitude, request.longitude)) {
-                currentDriver = driverList[i];
+        if (driverList.length > 1) {
+            for (let i = 0; i < driverList.length; i++) {
+                if (min < getDistance(driverList[i].lat, driverList[i].lng, request.latitude, request.longitude)) {
+                    currentDriver = driverList[i];
+                }
             }
         }
     }
@@ -161,33 +164,31 @@ io.on('connection', (socket) => {
         if (data.status == STATUS_NOT_READY) {
             for (let i = 0; i < driverList.length; i++) {
                 if (data.id == driverList[i].id) {
-                    driverList.pop(i);
+                    driverList.splice(i, 1);
                 }
             }
         }
-        console.log(driverList);
     });
 
     socket.on("driver accept", (data) => {
         for (let i = 0; i < listRequest.length; i++) {
             if (currentRequest.id == listRequest[i].id) {
                 requestRepo.updateStatus({ id: currentRequest.id, status: 2 });
-                listRequest.pop(i);
+                listRequest.splice(i, 1);
             }
         }
 
-        console.log(data);
         for (let i = 0; i < driverList.length; i++) {
             if (data.id == driverList[i].id) {
-                driverList.pop(i);
+                driverList.splice(i, 1);
             }
         }
         socket.broadcast.emit('new address added');
     });
     socket.on("driver decline", (data) => {
-        for (let i = 0; i < listRequest.length; i++) {
-            if (currentRequest.id == listRequest[i].id) {
-                listRequest.pop(i);
+        for (let i = 0; i < driverList.length; i++) {
+            if (data.id == driverList[i].id) {
+                driverList.splice(i, 1);
             }
         }
         socket.broadcast.emit('new address added');
